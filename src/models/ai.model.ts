@@ -39,3 +39,16 @@ export interface WeeklyWorkoutPlan {
   weekNumber: number;
   days: WorkoutDay[];
 }
+
+export interface BurnActivity {
+  activity: string;
+  duration: string;
+  caloriesBurned: number;
+  intensity?: string;
+}
+
+export interface BurnAnalysisResult {
+  totalCaloriesBurned: number;
+  activities: BurnActivity[];
+  summary: string;
+}

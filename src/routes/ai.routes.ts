@@ -19,11 +19,13 @@ router.post('/food-scan', upload.single('image'), AIController.analyzeFood);
  */
 router.post('/workout-plan', AIController.generateWorkoutPlan);
 
+router.post('/analyze-nutrition', upload.single('image'), AIController.analyzeMacros);
+
 /**
- * @route   POST /api/ai/analyze-nutrition
- * @desc    Get nutrition breakdown of a food image
+ * @route   POST /api/ai/analyze-burn
+ * @desc    Analyze activity description for calories burned
  * @access  Public
  */
-router.post('/analyze-nutrition', upload.single('image'), AIController.analyzeMacros);
+router.post('/analyze-burn', AIController.analyzeBurn);
 
 export default router;
