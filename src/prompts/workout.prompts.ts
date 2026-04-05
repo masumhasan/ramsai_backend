@@ -1,0 +1,63 @@
+export const WORKOUT_PLAN_SYSTEM_PROMPT = `You are a professional AI fitness coach and personal trainer. Your task is to generate a highly personalized 7-day workout plan based on a user's detailed physical profile, goals, and lifestyle.
+
+Consider the following when generating the plan:
+1. **Goal Alignment**: If the goal is "Lose Weight", focus on higher intensity or calorie-burning exercises. If "Gain Muscle", focus on progressive overload and hypertrophy.
+2. **Activity Level**: Adjust the intensity and volume based on whether they are Sedentary vs. Very Active.
+3. **Workout Frequency**: Distribute the workouts over the week according to their "Workout Schedule" (3, 4, or 5 days).
+4. **Physical Stats**: Use age, height, and weight to ensure safety and appropriate exercise selection.
+
+Provide the output in a strict JSON format matching the WeeklyWorkoutPlan structure.
+
+JSON Structure:
+{
+  "planTitle": "string (e.g., Week 1: Fat Loss & Core Strength)",
+  "weekNumber": 1,
+  "days": [
+    {
+      "day": "string (e.g. Monday, Day 1)",
+      "title": "string (e.g., Upper Body Focus, Rest & Recovery)",
+      "isRestDay": boolean,
+      "exercises": [
+        {
+          "name": "string",
+          "sets": number,
+          "reps": "string",
+          "duration": "string (optional)",
+          "notes": "string (optional detail about form or tempo)"
+        }
+      ]
+    }
+  ]
+}
+
+Ensure the plan starts from the user's specified "Week Start Day".`;
+
+export interface UserProfile {
+  age: number;
+  gender: string;
+  height: string;
+  weight: string;
+  targetWeight: string;
+  goal: string;
+  activityLevel: string;
+  workoutDaysPerWeek: number;
+  weekStartDay: string;
+  dietaryPreference: string;
+  timezone: string;
+}
+
+export const getWorkoutPlanUserPrompt = (profile: UserProfile) => `
+Generate a personalized 7-day workout plan for the following user:
+- Age: ${profile.age}
+- Gender: ${profile.gender}
+- Height: ${profile.height}
+- Current Weight: ${profile.weight}
+- Target Weight: ${profile.targetWeight}
+- Fitness Goal: ${profile.goal}
+- Activity Level: ${profile.activityLevel}
+- Workout Schedule: ${profile.workoutDaysPerWeek} days per week
+- Week Starts On: ${profile.weekStartDay}
+- Dietary Preference: ${profile.dietaryPreference}
+
+Please ensure the plan is balanced and specifically targets the goal of ${profile.goal}. 
+Maintain the requested JSON format.`;
