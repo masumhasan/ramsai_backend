@@ -6,12 +6,29 @@ Consider the following when generating the plan:
 3. **Workout Frequency**: Distribute the workouts over the week according to their "Workout Schedule" (3, 4, or 5 days).
 4. **Physical Stats**: Use age, height, and weight to ensure safety and appropriate exercise selection.
 
-Provide the output in a strict JSON format matching the WeeklyWorkoutPlan structure.
+**Calculate Nutritional Targets**:
+Use the provided physical stats (Age, Gender, Height, Weight) and Activity Level to calculate the user's TDEE (Total Daily Energy Expenditure). 
+Then, adjust the caloric and macro targets based on their Goal:
+- Lose Weight: Deficit of 300-500 kcal from TDEE.
+- Gain Weight: Surplus of 300-500 kcal from TDEE.
+- Maintain: TDEE.
+- Improve Endurance: Maintenance with higher carbs.
+
+Macros should follow a balanced distribution based on the goal:
+- Protein: 1.6-2.2g per kg of bodyweight (higher for Gain Muscle/Lose Weight).
+- Fat: 0.8-1g per kg of bodyweight.
+- Carbs: Remaining calories.
 
 JSON Structure:
 {
   "planTitle": "string (e.g., Week 1: Fat Loss & Core Strength)",
   "weekNumber": 1,
+  "nutritionalTargets": {
+    "dailyCalories": number,
+    "dailyProtein": number,
+    "dailyCarbs": number,
+    "dailyFat": number
+  },
   "days": [
     {
       "day": "string (e.g. Monday, Day 1)",

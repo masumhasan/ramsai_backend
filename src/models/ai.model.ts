@@ -34,10 +34,18 @@ export interface WorkoutDay {
   isRestDay: boolean;
 }
 
+export interface NutritionalTargets {
+  dailyCalories: number;
+  dailyProtein: number;
+  dailyCarbs: number;
+  dailyFat: number;
+}
+
 export interface WeeklyWorkoutPlan {
   planTitle: string;
   weekNumber: number;
   days: WorkoutDay[];
+  nutritionalTargets: NutritionalTargets;
 }
 
 export interface BurnActivity {
