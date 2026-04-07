@@ -36,16 +36,25 @@ JSON Structure:
       "isRestDay": boolean,
       "exercises": [
         {
-          "name": "string",
-          "sets": number,
-          "reps": "string",
-          "duration": "string (optional)",
-          "notes": "string (optional detail about form or tempo)"
+          "step_number": number,
+          "exercise_name": "string",
+          "short_instruction": "string (Keep under 15 words)",
+          "detailed_steps": ["string", "string", "string"], (2-4 bullet points)
+          "reps_count": number, (Integer: User must click CTA this many times)
+          "cta_label": "string (e.g., Complete Rep, Push Hard, Breathe)",
+          "completion_rule": "string (e.g. User must click CTA number times)"
         }
       ]
     }
   ]
 }
+
+**Exercise Rules**:
+- Every day (including rest days) MUST have EXACTLY 5 exercises.
+- Rest days should have mobility, stretching, or light recovery exercises.
+- Exercises must be returned in sequential order (step_number 1 to 5).
+- Use simple fitness coaching language for beginners.
+- For reps_count, use numbers between 8-15 for strength/toning, and 3-5 for heavy sets, or high for cardio.
 
 Ensure the plan starts from the user's specified "Week Start Day".`;
 
