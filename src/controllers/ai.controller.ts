@@ -31,15 +31,22 @@ export class AIController {
   public static async generateWorkoutPlan(req: Request, res: Response) {
     console.log('\n[API Request] POST /api/ai/workout-plan');
     const profile = req.body;
+    const userId = (req as any).userId;
+
+    if (!userId) {
+      console.error('[API Error] Unauthorized request for workout plan');
+      return res.status(401).json({ error: 'Authentication required' });
+    }
     
+    console.log(`- UserID: ${userId}`);
     console.log(`- Age: ${profile.age}`);
     console.log(`- Goal: ${profile.goal}`);
     console.log(`- Weight: ${profile.weight}`);
     console.log(`- Schedule: ${profile.workoutDaysPerWeek} days`);
 
     try {
-      const result = await WorkoutService.generateWorkoutPlan(profile);
-      console.log('[API Success] Detailed workout plan generated');
+      const result = await WorkoutService.generateWorkoutPlan(profile, userId);
+      console.log('[API Success] Detailed workout plan generated and saved');
       return res.json(result);
     } catch (error: any) {
       console.error('[API Error] High-fidelity plan generation failed:', error.message);

@@ -3,6 +3,9 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import aiRoutes from './routes/ai.routes';
+import authRoutes from './routes/auth.routes';
+import userRoutes from './routes/user.routes';
+import logRoutes from './routes/log.routes';
 
 const app = express();
 
@@ -24,6 +27,9 @@ app.get('/health', (req, res) => {
 
 // API Routes
 app.use('/api/ai', aiRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/user', userRoutes);
+app.use('/api/logs', logRoutes);
 
 // Error Handler
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {

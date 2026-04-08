@@ -12,12 +12,9 @@ const upload = multer({ storage: multer.memoryStorage() });
  */
 router.post('/food-scan', upload.single('image'), AIController.analyzeFood);
 
-/**
- * @route   POST /api/ai/workout-plan
- * @desc    Generate a weekly workout plan
- * @access  Public
- */
-router.post('/workout-plan', AIController.generateWorkoutPlan);
+import { authenticate } from '../middleware/auth.middleware';
+
+router.post('/workout-plan', authenticate, AIController.generateWorkoutPlan);
 
 router.post('/analyze-nutrition', upload.single('image'), AIController.analyzeMacros);
 

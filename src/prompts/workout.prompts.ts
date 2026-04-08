@@ -36,13 +36,9 @@ JSON Structure:
       "isRestDay": boolean,
       "exercises": [
         {
-          "step_number": number,
-          "exercise_name": "string",
-          "short_instruction": "string (Keep under 15 words)",
-          "detailed_steps": ["string", "string", "string"], (2-4 bullet points)
-          "reps_count": number, (Integer: User must click CTA this many times)
-          "cta_label": "string (e.g., Complete Rep, Push Hard, Breathe)",
-          "completion_rule": "string (e.g. User must click CTA number times)"
+          "name": "string (e.g., Push-ups)",
+          "sets": number,
+          "reps": "string (e.g., 3 sets of 10-12 reps or 30 seconds)"
         }
       ]
     }
