@@ -97,6 +97,26 @@ const BurnLogSchema = new Schema({
 
 BurnLogSchema.index({ userId: 1, date: -1 });
 
+// Weight Log
+export interface IWeightLog extends ILog {
+  weight: number;
+  previousWeight?: number;
+  change?: number;
+  notes?: string;
+}
+
+const WeightLogSchema = new Schema({
+  userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  date: { type: Date, default: Date.now },
+  weight: { type: Number, required: true },
+  previousWeight: { type: Number },
+  change: { type: Number },
+  notes: { type: String }
+}, { timestamps: true });
+
+WeightLogSchema.index({ userId: 1, date: -1 });
+
 export const WorkoutLog = mongoose.model<IWorkoutLog>('WorkoutLog', WorkoutLogSchema);
 export const MealLog = mongoose.model<IMealLog>('MealLog', MealLogSchema);
 export const BurnLog = mongoose.model<IBurnLog>('BurnLog', BurnLogSchema);
+export const WeightLog = mongoose.model<IWeightLog>('WeightLog', WeightLogSchema);

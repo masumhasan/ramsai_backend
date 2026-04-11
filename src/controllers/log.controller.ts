@@ -1,7 +1,8 @@
 import { Response } from 'express';
 import { AuthRequest } from '../middleware/auth.middleware';
-import { MealLog, WorkoutLog, BurnLog } from '../models/log.model';
+import { MealLog, WorkoutLog, BurnLog, WeightLog } from '../models/log.model';
 import { WeeklyWorkoutPlanModel } from '../models/ai.model';
+import User from '../models/user.model';
 
 export class LogController {
   // Meal Logs
@@ -110,6 +111,48 @@ export class LogController {
     try {
       const plans = await WeeklyWorkoutPlanModel.find({ userId: req.userId }).sort({ startDate: -1 });
       return res.json(plans);
+    } catch (error: any) {
+      return res.status(500).json({ error: error.message });
+    }
+  }
+
+  // Weight Logs
+  public static async saveWeightLog(req: AuthRequest, res: Response) {
+    try {
+      const { weight, notes } = req.body;
+      if (!weight) {
+        return res.status(400).json({ error: 'weight is required' });
+      }
+
+      const user = await User.findById(req.userId);
+      const previousWeight = user?.currentWeight ?? undefined;
+      const change = previousWeight != null ? +(weight - previousWeight).toFixed(1) : undefined;
+
+      const log = new WeightLog({
+        userId: req.userId,
+        weight,
+        previousWeight,
+        change,
+        notes,
+      });
+      await log.save();
+
+      await User.findByIdAndUpdate(req.userId, {
+        $set: { currentWeight: weight }
+      });
+
+      console.log(`[LOG] Weight Log saved: ${weight} kg (change: ${change ?? 'N/A'}) for user ${req.userId}`);
+      return res.status(201).json(log);
+    } catch (error: any) {
+      console.error(`[LOG ERROR] Failed to save weight log: ${error.message}`);
+      return res.status(500).json({ error: error.message });
+    }
+  }
+
+  public static async getWeightLogs(req: AuthRequest, res: Response) {
+    try {
+      const logs = await WeightLog.find({ userId: req.userId }).sort({ date: -1 });
+      return res.json(logs);
     } catch (error: any) {
       return res.status(500).json({ error: error.message });
     }

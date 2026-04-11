@@ -20,4 +20,8 @@ router.get('/burns', authenticate, LogController.getBurnLogs);
 router.post('/plans', authenticate, LogController.saveWorkoutPlan);
 router.get('/plans', authenticate, LogController.getWorkoutPlans);
 
+// Weight Logs
+router.post('/weight', authenticate, LogController.saveWeightLog);
+router.get('/weight', authenticate, LogController.getWeightLogs);
+
 export default router;
