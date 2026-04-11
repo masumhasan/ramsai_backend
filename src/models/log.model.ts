@@ -9,6 +9,7 @@ export interface ILog extends Document {
 // Workout Log
 export interface IWorkoutLog extends ILog {
   workoutId?: mongoose.Types.ObjectId;
+  workoutTitle?: string;
   exercises: Array<{
     name: string;
     sets: number;
@@ -24,6 +25,7 @@ const WorkoutLogSchema = new Schema({
   userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   date: { type: Date, default: Date.now },
   workoutId: { type: Schema.Types.ObjectId, ref: 'WeeklyWorkoutPlan' },
+  workoutTitle: { type: String },
   exercises: [{
     name: { type: String, required: true },
     sets: { type: Number, required: true },
@@ -34,6 +36,8 @@ const WorkoutLogSchema = new Schema({
   durationMinutes: { type: Number },
   notes: { type: String }
 }, { timestamps: true });
+
+WorkoutLogSchema.index({ userId: 1, date: -1 });
 
 // Meal Log
 export interface IMealLog extends ILog {
@@ -66,6 +70,8 @@ const MealLogSchema = new Schema({
   }]
 }, { timestamps: true });
 
+MealLogSchema.index({ userId: 1, date: -1 });
+
 // Burn Log
 export interface IBurnLog extends ILog {
   activityDescription: string;
@@ -88,6 +94,8 @@ const BurnLogSchema = new Schema({
     caloriesBurned: { type: Number }
   }]
 }, { timestamps: true });
+
+BurnLogSchema.index({ userId: 1, date: -1 });
 
 export const WorkoutLog = mongoose.model<IWorkoutLog>('WorkoutLog', WorkoutLogSchema);
 export const MealLog = mongoose.model<IMealLog>('MealLog', MealLogSchema);

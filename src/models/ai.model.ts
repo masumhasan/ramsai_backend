@@ -46,6 +46,8 @@ export interface NutritionalTargets {
 export interface WeeklyWorkoutPlan {
   planTitle: string;
   weekNumber: number;
+  startDate: Date;
+  endDate: Date;
   days: WorkoutDay[];
   nutritionalTargets: NutritionalTargets;
 }
@@ -72,6 +74,8 @@ const WeeklyWorkoutPlanSchema = new Schema({
   userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   planTitle: { type: String, required: true },
   weekNumber: { type: Number, required: true },
+  startDate: { type: Date, required: true },
+  endDate: { type: Date, required: true },
   days: [{
     day: { type: String, required: true },
     title: { type: String, required: true },

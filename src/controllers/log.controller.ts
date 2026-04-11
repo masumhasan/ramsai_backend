@@ -82,23 +82,33 @@ export class LogController {
     }
   }
 
-  // AI Workout Plans persistence
   public static async saveWorkoutPlan(req: AuthRequest, res: Response) {
     try {
+      const body = req.body;
+      const startDate = body.startDate ? new Date(body.startDate) : new Date();
+      let endDate = body.endDate ? new Date(body.endDate) : new Date(startDate);
+      if (!body.endDate) {
+        endDate.setDate(endDate.getDate() + 6);
+      }
+
       const plan = new WeeklyWorkoutPlanModel({
-        ...req.body,
-        userId: req.userId
+        ...body,
+        userId: req.userId,
+        startDate,
+        endDate,
       });
       await plan.save();
+      console.log(`[LOG] Workout Plan saved: "${plan.planTitle}" (Week ${plan.weekNumber}) for user ${req.userId}`);
       return res.status(201).json(plan);
     } catch (error: any) {
+      console.error(`[LOG ERROR] Failed to save workout plan: ${error.message}`);
       return res.status(500).json({ error: error.message });
     }
   }
 
   public static async getWorkoutPlans(req: AuthRequest, res: Response) {
     try {
-      const plans = await WeeklyWorkoutPlanModel.find({ userId: req.userId }).sort({ createdAt: -1 });
+      const plans = await WeeklyWorkoutPlanModel.find({ userId: req.userId }).sort({ startDate: -1 });
       return res.json(plans);
     } catch (error: any) {
       return res.status(500).json({ error: error.message });

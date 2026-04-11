@@ -19,6 +19,12 @@ export interface IUser extends Document {
   workoutSchedule?: any; // To be defined more specifically if needed
   dietaryPreference: 'Everything' | 'Vegetarian' | 'Vegan' | 'Pascaterian' | 'Keto' | 'Paleo';
   hasCompletedOnboarding: boolean;
+  nutritionalTargets?: {
+    dailyCalories: number;
+    dailyProtein: number;
+    dailyCarbs: number;
+    dailyFat: number;
+  };
   createdAt: Date;
   updatedAt: Date;
 }
@@ -56,7 +62,13 @@ const UserSchema: Schema = new Schema({
     enum: ['Everything', 'Vegetarian', 'Vegan', 'Pascaterian', 'Keto', 'Paleo'],
     default: 'Everything'
   },
-  hasCompletedOnboarding: { type: Boolean, default: false }
+  hasCompletedOnboarding: { type: Boolean, default: false },
+  nutritionalTargets: {
+    dailyCalories: { type: Number },
+    dailyProtein: { type: Number },
+    dailyCarbs: { type: Number },
+    dailyFat: { type: Number }
+  }
 }, { timestamps: true });
 
 UserSchema.pre('save', async function(this: IUser) {
