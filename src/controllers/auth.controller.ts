@@ -7,14 +7,17 @@ export class AuthController {
   public static async signup(req: Request, res: Response) {
     try {
       const { email, password, name, ...profileData } = req.body;
+      console.log(`[AUTH] Attempting signup for email: ${email}`);
 
       // Check if user already exists
       const existingUser = await User.findOne({ email });
       if (existingUser) {
+        console.log(`[AUTH] Signup failed: User already exists (${email})`);
         return res.status(400).json({ error: 'User already exists with this email' });
       }
 
       // Create new user
+      console.log(`[AUTH] Creating new user: ${name} (${email})`);
       const user = new User({
         email,
         password,
@@ -23,6 +26,7 @@ export class AuthController {
       });
 
       await user.save();
+      console.log(`[AUTH] User saved successfully. Generating token...`);
 
       // Generate token
       const token = jwt.sign({ userId: user._id }, config.jwtSecret, { expiresIn: '7d' });

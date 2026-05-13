@@ -22,7 +22,7 @@ const startServer = async () => {
     app.listen(config.port, () => {
       console.log(`
       --------------------------------------------------
-      🚀 RAMSAI AI BACKEND IS RUNNING
+      🚀 GOCAL AI BACKEND IS RUNNING
       --------------------------------------------------
       PORT: ${config.port}
       ENVIRONMENT: ${config.nodeEnv}

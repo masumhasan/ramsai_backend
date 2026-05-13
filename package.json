@@ -1,7 +1,7 @@
 {
-  "name": "ramsai_backend",
+  "name": "gocal_ai_backend",
   "version": "1.0.0",
-  "description": "AI-powered backend for Ramsai App",
+  "description": "AI-powered backend for GoCal AI App",
   "main": "dist/server.js",
   "scripts": {
     "start": "node dist/server.js",

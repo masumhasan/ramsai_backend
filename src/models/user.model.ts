@@ -18,6 +18,7 @@ export interface IUser extends Document {
   weekStart: 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday';
   workoutSchedule?: any; // To be defined more specifically if needed
   dietaryPreference: 'Everything' | 'Vegetarian' | 'Vegan' | 'Pascaterian' | 'Keto' | 'Paleo';
+  language: 'English' | 'Hindi' | 'French' | 'Spanish';
   hasCompletedOnboarding: boolean;
   nutritionalTargets?: {
     dailyCalories: number;
@@ -61,6 +62,11 @@ const UserSchema: Schema = new Schema({
     type: String, 
     enum: ['Everything', 'Vegetarian', 'Vegan', 'Pascaterian', 'Keto', 'Paleo'],
     default: 'Everything'
+  },
+  language: {
+    type: String,
+    enum: ['English', 'Hindi', 'French', 'Spanish'],
+    default: 'English'
   },
   hasCompletedOnboarding: { type: Boolean, default: false },
   nutritionalTargets: {
