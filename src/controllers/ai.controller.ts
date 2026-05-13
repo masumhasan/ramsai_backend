@@ -15,10 +15,13 @@ export class AIController {
     console.log(`- MIME Type: ${req.file.mimetype}`);
     console.log(`- Size: ${(req.file.size / 1024).toFixed(2)} KB`);
 
+    const language = req.query.lang as string || 'en';
+
     try {
       const result = await FoodService.analyzeFoodImage(
         req.file.buffer, 
-        req.file.mimetype
+        req.file.mimetype,
+        language
       );
       console.log('[API Success] Analysis complete');
       return res.json(result);

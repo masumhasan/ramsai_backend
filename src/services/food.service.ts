@@ -4,7 +4,7 @@ import { FOOD_ANALYSIS_SYSTEM_PROMPT, getFoodAnalysisUserPrompt } from '../promp
 import { FoodAnalysisResult } from '../models/ai.model';
 
 export class FoodService extends AIService {
-  public static async analyzeFoodImage(imageBuffer: Buffer, mimeType: string): Promise<FoodAnalysisResult> {
+  public static async analyzeFoodImage(imageBuffer: Buffer, mimeType: string, language: string = 'en'): Promise<FoodAnalysisResult> {
     // OpenAI vision only supports common image types. If it's octet-stream, default to jpeg.
     let finalMimeType = mimeType;
     if (mimeType === 'application/octet-stream' || !mimeType.startsWith('image/')) {
@@ -16,11 +16,11 @@ export class FoodService extends AIService {
     const dataUrl = `data:${finalMimeType};base64,${base64Image}`;
 
     const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
-      { role: 'system', content: FOOD_ANALYSIS_SYSTEM_PROMPT },
+      { role: 'system', content: FOOD_ANALYSIS_SYSTEM_PROMPT(language) },
       { 
         role: 'user', 
         content: [
-          { type: 'text', text: getFoodAnalysisUserPrompt() },
+          { type: 'text', text: getFoodAnalysisUserPrompt(language) },
           { type: 'image_url', image_url: { url: dataUrl } }
         ]
       }
