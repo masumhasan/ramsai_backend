@@ -22,10 +22,10 @@ export class WorkoutService extends AIService {
       endDate.setDate(endDate.getDate() + 6);
 
       const plan = new WeeklyWorkoutPlanModel({
+        ...result,
         userId,
         startDate,
-        endDate,
-        ...result
+        endDate
       });
       await plan.save();
 
