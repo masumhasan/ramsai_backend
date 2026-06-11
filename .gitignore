@@ -80,7 +80,7 @@ out
 
 # Nuxt.js build / generate output
 .nuxt
-dist
+# dist is committed so the server can pull and run without a build step
 
 # Gatsby files
 .cache/
