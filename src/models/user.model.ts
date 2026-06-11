@@ -5,6 +5,8 @@ export interface IUser extends Document {
   email: string;
   password?: string;
   name: string;
+  otpCode?: string;
+  otpExpires?: Date;
   age?: number;
   gender?: 'Male' | 'Female' | 'Other';
   valueType: 'metric' | 'imperial';
@@ -68,6 +70,8 @@ const UserSchema: Schema = new Schema({
     enum: ['en', 'hi', 'fr', 'es', 'English', 'Hindi', 'French', 'Spanish'],
     default: 'en'
   },
+  otpCode: { type: String },
+  otpExpires: { type: Date },
   hasCompletedOnboarding: { type: Boolean, default: false },
   nutritionalTargets: {
     dailyCalories: { type: Number },

@@ -8,7 +8,9 @@ export const config = {
   openaiApiKey: process.env.OPENAI_API_KEY,
   mongodbUri: process.env.MONGODB_URI || 'mongodb://localhost:27017/gocal_ai',
   jwtSecret: process.env.JWT_SECRET || 'secret',
-  nodeEnv: process.env.NODE_ENV || 'development'
+  nodeEnv: process.env.NODE_ENV || 'development',
+  emailUser: process.env.EMAIL || '',
+  emailPassword: process.env.APP_PASSWORD || '',
 };
 
 if (!config.openaiApiKey) {
