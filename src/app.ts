@@ -6,6 +6,7 @@ import aiRoutes from './routes/ai.routes';
 import authRoutes from './routes/auth.routes';
 import userRoutes from './routes/user.routes';
 import logRoutes from './routes/log.routes';
+import adminRoutes from './routes/admin.routes';
 
 const app = express();
 
@@ -30,6 +31,7 @@ app.use('/api/ai', aiRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/logs', logRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Error Handler
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {

@@ -1,6 +1,7 @@
 import app from './app';
 import { config } from './config/env';
 import { connectDatabase, checkOpenAIStatus } from './config/database';
+import { seedSuperAdmin } from './scripts/seed-admin';
 
 const startServer = async () => {
   try {
@@ -15,6 +16,7 @@ const startServer = async () => {
 
     if (mongoConnected) {
       console.log('MongoDB connected and working');
+      await seedSuperAdmin();
     } else {
       console.error('MongoDB failed to connect');
     }

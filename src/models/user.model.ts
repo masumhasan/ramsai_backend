@@ -1,10 +1,16 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import bcrypt from 'bcryptjs';
 
+export type UserRole = 'superadmin' | 'admin' | 'user';
+export type SubscriptionStatus = 'inactive' | 'active' | 'trial' | 'expired';
+
 export interface IUser extends Document {
   email: string;
   password?: string;
   name: string;
+  role: UserRole;
+  lastActiveAt?: Date;
+  subscriptionStatus: SubscriptionStatus;
   otpCode?: string;
   otpExpires?: Date;
   age?: number;
@@ -18,7 +24,7 @@ export interface IUser extends Document {
   activityLevel: 'Sedentary' | 'Lightly Active' | 'Moderately Active' | 'Very Active' | 'Extra Active';
   timezone: string;
   weekStart: 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday';
-  workoutSchedule?: any; // To be defined more specifically if needed
+  workoutSchedule?: any;
   dietaryPreference: 'Everything' | 'Vegetarian' | 'Vegan' | 'Pascaterian' | 'Keto' | 'Paleo';
   language: 'en' | 'hi' | 'fr' | 'es' | 'English' | 'Hindi' | 'French' | 'Spanish';
   hasCompletedOnboarding: boolean;
@@ -69,6 +75,18 @@ const UserSchema: Schema = new Schema({
     type: String,
     enum: ['en', 'hi', 'fr', 'es', 'English', 'Hindi', 'French', 'Spanish'],
     default: 'en'
+  },
+  role: {
+    type: String,
+    enum: ['superadmin', 'admin', 'user'],
+    default: 'user',
+    index: true,
+  },
+  lastActiveAt: { type: Date },
+  subscriptionStatus: {
+    type: String,
+    enum: ['inactive', 'active', 'trial', 'expired'],
+    default: 'inactive',
   },
   otpCode: { type: String },
   otpExpires: { type: Date },
