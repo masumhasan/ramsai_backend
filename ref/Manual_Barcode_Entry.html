@@ -1,0 +1,225 @@
+<!DOCTYPE html><html lang="en" class="dark"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">try{
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "on-tertiary-fixed-variant": "#005321",
+                "on-primary-fixed": "#001a42",
+                "error-container": "#93000a",
+                "on-surface": "#dae2fd",
+                "on-surface-variant": "#c2c6d6",
+                "on-tertiary": "#003915",
+                "outline": "#8c909f",
+                "surface-dim": "#0b1326",
+                "inverse-on-surface": "#283044",
+                "background": "#0b1326",
+                "error": "#ffb4ab",
+                "on-error-container": "#ffdad6",
+                "surface-container": "#171f33",
+                "surface": "#0b1326",
+                "on-primary-fixed-variant": "#004395",
+                "on-background": "#dae2fd",
+                "surface-container-highest": "#2d3449",
+                "secondary-fixed": "#f0dbff",
+                "on-error": "#690005",
+                "on-secondary-fixed": "#2c0051",
+                "surface-bright": "#31394d",
+                "tertiary-fixed": "#6bff8f",
+                "primary": "#adc6ff",
+                "surface-container-low": "#131b2e",
+                "on-primary-container": "#00285d",
+                "inverse-surface": "#dae2fd",
+                "tertiary": "#4ae176",
+                "secondary": "#ddb7ff",
+                "surface-tint": "#adc6ff",
+                "secondary-fixed-dim": "#ddb7ff",
+                "on-secondary-fixed-variant": "#6900b3",
+                "inverse-primary": "#005ac2",
+                "on-secondary-container": "#d6a9ff",
+                "tertiary-fixed-dim": "#4ae176",
+                "secondary-container": "#6f00be",
+                "surface-container-high": "#222a3d",
+                "on-tertiary-container": "#003111",
+                "tertiary-container": "#00a74b",
+                "primary-fixed-dim": "#adc6ff",
+                "on-tertiary-fixed": "#002109",
+                "surface-container-lowest": "#060e20",
+                "on-secondary": "#490080",
+                "primary-container": "#4d8eff",
+                "surface-variant": "#2d3449",
+                "on-primary": "#002e6a",
+                "primary-fixed": "#d8e2ff",
+                "outline-variant": "#424754"
+            },
+            "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+            },
+            "spacing": {
+                "xl": "32px",
+                "margin-mobile": "20px",
+                "xs": "8px",
+                "gutter": "16px",
+                "lg": "24px",
+                "base": "4px",
+                "sm": "12px",
+                "md": "16px"
+            },
+            "fontFamily": {
+                "headline-sm": ["Plus Jakarta Sans"],
+                "headline-lg-mobile": ["Plus Jakarta Sans"],
+                "label-sm": ["Manrope"],
+                "label-md": ["Manrope"],
+                "headline-lg": ["Plus Jakarta Sans"],
+                "body-lg": ["Plus Jakarta Sans"],
+                "body-md": ["Plus Jakarta Sans"],
+                "headline-md": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "700"}],
+                "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                "body-lg": ["18px", {"lineHeight": "26px", "fontWeight": "400"}],
+                "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    }catch(_e){}</script></head><body class="font-body-md text-body-md antialiased">
+
+    <!-- Top App Bar -->
+    <header class="fixed top-0 left-0 right-0 z-50 glass-header bg-surface-container-lowest/80 h-16 flex items-center px-margin-mobile">
+        <button onclick="window.location.href='{{DATA:SCREEN:SCREEN_8}}'" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-variant/20 transition-transform active:scale-95" aria-label="Go back">
+            <span class="material-symbols-outlined text-primary" data-original-icon="arrow_back">arrow_back</span>
+        </button>
+        <h1 class="ml-4 font-headline-md text-headline-md-mobile font-bold text-on-surface">Enter Barcode</h1>
+    </header>
+
+    <main class="pt-24 pb-40 px-margin-mobile flex flex-col min-h-screen">
+        <!-- Visual Context Card -->
+        <div class="mb-xl bg-surface-container-low rounded-[24px] p-lg flex flex-col items-center text-center relative overflow-hidden">
+            <!-- Subtle Ambient Glow -->
+            <div class="absolute -top-20 -right-20 w-40 h-40 bg-primary/10 blur-[80px] rounded-full"></div>
+            
+            <div class="w-20 h-20 mb-md bg-surface-container-highest rounded-2xl flex items-center justify-center">
+                <span class="material-symbols-outlined text-primary text-[40px]" style="font-variation-settings: 'FILL' 1;">barcode_scanner</span>
+            </div>
+            
+            <h2 class="font-headline-sm text-headline-sm text-on-surface mb-xs">Manual Entry</h2>
+            <p class="font-label-md text-label-md text-on-surface-variant max-w-[280px]">
+                Enter the 12 or 13-digit barcode found on the product packaging.
+            </p>
+        </div>
+
+        <!-- Barcode Input Section -->
+        <div class="flex flex-col gap-sm">
+            <div class="barcode-focus-ring relative flex items-center bg-surface-container rounded-xl border border-outline-variant/30 p-1">
+                <input type="number" id="barcodeInput" placeholder="0000000000000" class="w-full bg-transparent border-none focus:ring-0 text-center text-[32px] font-bold tracking-[0.2em] py-4 text-primary placeholder:text-on-surface-variant/20" maxlength="13" inputmode="numeric">
+                <button id="clearBtn" class="absolute right-4 hidden opacity-60 hover:opacity-100 transition-opacity">
+                    <span class="material-symbols-outlined">cancel</span>
+                </button>
+            </div>
+            
+            <div id="validationMsg" class="h-5 px-2">
+                <p class="font-label-sm text-label-sm text-error hidden flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[14px]">error</span>
+                    Invalid barcode length
+                </p>
+            </div>
+        </div>
+
+        <!-- Custom Numeric Keypad (Visual/UX enhancement) -->
+        <div class="mt-auto grid grid-cols-3 gap-3 pb-8">
+            <button class="keypad-button h-14 bg-surface-container-highest/40 rounded-xl font-headline-sm text-on-surface transition-all" onclick="appendNumber('1')">1</button>
+            <button class="keypad-button h-14 bg-surface-container-highest/40 rounded-xl font-headline-sm text-on-surface transition-all" onclick="appendNumber('2')">2</button>
+            <button class="keypad-button h-14 bg-surface-container-highest/40 rounded-xl font-headline-sm text-on-surface transition-all" onclick="appendNumber('3')">3</button>
+            <button class="keypad-button h-14 bg-surface-container-highest/40 rounded-xl font-headline-sm text-on-surface transition-all" onclick="appendNumber('4')">4</button>
+            <button class="keypad-button h-14 bg-surface-container-highest/40 rounded-xl font-headline-sm text-on-surface transition-all" onclick="appendNumber('5')">5</button>
+            <button class="keypad-button h-14 bg-surface-container-highest/40 rounded-xl font-headline-sm text-on-surface transition-all" onclick="appendNumber('6')">6</button>
+            <button class="keypad-button h-14 bg-surface-container-highest/40 rounded-xl font-headline-sm text-on-surface transition-all" onclick="appendNumber('7')">7</button>
+            <button class="keypad-button h-14 bg-surface-container-highest/40 rounded-xl font-headline-sm text-on-surface transition-all" onclick="appendNumber('8')">8</button>
+            <button class="keypad-button h-14 bg-surface-container-highest/40 rounded-xl font-headline-sm text-on-surface transition-all" onclick="appendNumber('9')">9</button>
+            <div class="h-14"></div>
+            <button class="keypad-button h-14 bg-surface-container-highest/40 rounded-xl font-headline-sm text-on-surface transition-all" onclick="appendNumber('0')">0</button>
+            <button class="keypad-button h-14 flex items-center justify-center bg-surface-container-highest/40 rounded-xl text-on-surface transition-all" onclick="deleteNumber()">
+                <span class="material-symbols-outlined">backspace</span>
+            </button>
+        </div>
+    </main>
+
+    <!-- Fixed Bottom Action -->
+    <div class="fixed bottom-0 left-0 right-0 p-margin-mobile bg-gradient-to-t from-background via-background/95 to-transparent pt-10">
+        <button id="searchBtn" disabled="" class="w-full h-14 bg-primary-container text-on-primary-container opacity-40 rounded-xl font-bold font-label-md text-label-md flex items-center justify-center gap-2 transition-all duration-300 shadow-[0_4px_20px_rgba(173,198,255,0.1)] active:scale-[0.98] disabled:cursor-not-allowed" onclick="window.location.href='{{DATA:SCREEN:SCREEN_2}}'">
+            <span class="material-symbols-outlined">search</span>
+            SEARCH PRODUCT
+        </button>
+    </div>
+
+    <script class="">
+        const input = document.getElementById('barcodeInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const validationMsg = document.querySelector('#validationMsg p');
+
+        function updateUI() {
+            const val = input.value;
+            const isValid = val.length === 12 || val.length === 13;
+            
+            // Clear button visibility
+            if (val.length > 0) {
+                clearBtn.classList.remove('hidden');
+            } else {
+                clearBtn.classList.add('hidden');
+            }
+
+            // Search button state
+            if (isValid) {
+                searchBtn.disabled = false;
+                searchBtn.classList.remove('opacity-40', 'bg-primary-container', 'text-on-primary-container');
+                searchBtn.classList.add('bg-primary', 'text-on-primary-fixed', 'opacity-100');
+                validationMsg.classList.add('hidden');
+            } else {
+                searchBtn.disabled = true;
+                searchBtn.classList.add('opacity-40', 'bg-primary-container', 'text-on-primary-container');
+                searchBtn.classList.remove('bg-primary', 'text-on-primary-fixed', 'opacity-100');
+                
+                if (val.length > 13) {
+                    validationMsg.classList.remove('hidden');
+                } else {
+                    validationMsg.classList.add('hidden');
+                }
+            }
+        }
+
+        function appendNumber(num) {
+            if (input.value.length < 13) {
+                input.value += num;
+                updateUI();
+            }
+        }
+
+        function deleteNumber() {
+            input.value = input.value.slice(0, -1);
+            updateUI();
+        }
+
+        input.addEventListener('input', (e) => {
+            if (input.value.length > 13) {
+                input.value = input.value.slice(0, 13);
+            }
+            updateUI();
+        });
+
+        clearBtn.addEventListener('click', () => {
+            input.value = '';
+            updateUI();
+            input.focus();
+        });
+
+        // Vibration</script></body></html>

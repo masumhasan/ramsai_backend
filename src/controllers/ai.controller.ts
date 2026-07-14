@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { FoodService } from '../services/food.service';
 import { WorkoutService } from '../services/workout.service';
 import { BurnService } from '../services/burn.service';
+import { ProductService } from '../services/product.service';
 
 export class AIController {
   public static async analyzeFood(req: Request, res: Response) {
@@ -80,5 +81,53 @@ export class AIController {
 
   public static async analyzeMacros(req: Request, res: Response) {
     return AIController.analyzeFood(req, res);
+  }
+
+  public static async scanProduct(req: Request, res: Response) {
+    console.log('\n[API Request] POST /api/ai/scan-product');
+    const { barcode } = req.body;
+    const language = req.query.lang as string || 'en';
+
+    if (!barcode) {
+      console.error('[API Error] Missing barcode parameter');
+      return res.status(400).json({ error: 'Missing barcode parameter' });
+    }
+
+    try {
+      const result = await ProductService.analyzeProductBarcode(barcode, language);
+      console.log('[API Success] Product scanned and analyzed successfully');
+      return res.json(result);
+    } catch (error: any) {
+      if (error.message === 'PRODUCT_NOT_FOUND') {
+        console.warn(`[API Info] Product not found for barcode: ${barcode}`);
+        return res.status(404).json({ error: 'Product not found. Please scan the label instead.' });
+      }
+      console.error('[API Error] Product scan failed:', error.message);
+      return res.status(500).json({ error: 'Internal AI error or Invalid Request' });
+    }
+  }
+
+  public static async scanLabel(req: Request, res: Response) {
+    console.log('\n[API Request] POST /api/ai/scan-label');
+
+    if (!req.file) {
+      console.error('[API Error] No image provided for label scan');
+      return res.status(400).json({ error: 'No image file provided' });
+    }
+
+    const language = req.query.lang as string || 'en';
+
+    try {
+      const result = await ProductService.analyzeProductLabelImage(
+        req.file.buffer,
+        req.file.mimetype,
+        language
+      );
+      console.log('[API Success] Label OCR and analysis complete');
+      return res.json(result);
+    } catch (error: any) {
+      console.error('[API Error] Label scan failed:', error.message);
+      return res.status(500).json({ error: 'Internal AI error or Invalid Request' });
+    }
   }
 }

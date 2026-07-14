@@ -1,0 +1,267 @@
+<!DOCTYPE html><html class="dark" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport">
+<title>Barcode Scanner | Fitness Pro</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;family=Manrope:wght@500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@100..900&amp;family=Plus+Jakarta+Sans:wght@100..900&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .scan-frame-gradient {
+            background: linear-gradient(90deg, #adc6ff 0%, transparent 50%, #adc6ff 100%);
+            height: 2px;
+            width: 100%;
+            position: absolute;
+            animation: scan 2.5s ease-in-out infinite;
+        }
+        @keyframes scan {
+            0% { top: 0%; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+        .glass-overlay {
+            background: rgba(11, 19, 38, 0.7);
+            backdrop-filter: blur(4px);
+        }
+        .scanner-corner {
+            width: 40px;
+            height: 40px;
+            border-color: #adc6ff;
+            position: absolute;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-container": "#00285d",
+                        "inverse-primary": "#005ac2",
+                        "on-surface": "#dae2fd",
+                        "tertiary-container": "#00a74b",
+                        "surface-bright": "#31394d",
+                        "on-error": "#690005",
+                        "inverse-on-surface": "#283044",
+                        "secondary-fixed": "#f0dbff",
+                        "outline-variant": "#424754",
+                        "on-primary-fixed": "#001a42",
+                        "error-container": "#93000a",
+                        "background": "#0b1326",
+                        "surface-container-high": "#222a3d",
+                        "surface-tint": "#adc6ff",
+                        "tertiary": "#4ae176",
+                        "surface-dim": "#0b1326",
+                        "primary-fixed": "#d8e2ff",
+                        "on-tertiary-container": "#003111",
+                        "surface-variant": "#2d3449",
+                        "surface": "#0b1326",
+                        "on-secondary": "#490080",
+                        "on-secondary-fixed-variant": "#6900b3",
+                        "on-tertiary-fixed-variant": "#005321",
+                        "inverse-surface": "#dae2fd",
+                        "surface-container-low": "#131b2e",
+                        "on-surface-variant": "#c2c6d6",
+                        "secondary-container": "#6f00be",
+                        "on-tertiary-fixed": "#002109",
+                        "on-primary": "#002e6a",
+                        "primary-fixed-dim": "#adc6ff",
+                        "on-tertiary": "#003915",
+                        "surface-container-lowest": "#060e20",
+                        "on-background": "#dae2fd",
+                        "primary-container": "#4d8eff",
+                        "surface-container": "#171f33",
+                        "on-error-container": "#ffdad6",
+                        "on-secondary-container": "#d6a9ff",
+                        "secondary": "#ddb7ff",
+                        "error": "#ffb4ab",
+                        "secondary-fixed-dim": "#ddb7ff",
+                        "on-secondary-fixed": "#2c0051",
+                        "surface-container-highest": "#2d3449",
+                        "primary": "#adc6ff",
+                        "tertiary-fixed-dim": "#4ae176",
+                        "tertiary-fixed": "#6bff8f",
+                        "outline": "#8c909f",
+                        "on-primary-fixed-variant": "#004395"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "4px",
+                        "sm": "12px",
+                        "lg": "24px",
+                        "gutter": "16px",
+                        "margin-mobile": "20px",
+                        "md": "16px",
+                        "xl": "32px",
+                        "xs": "8px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "headline-sm": ["Plus Jakarta Sans"],
+                        "label-sm": ["Manrope"],
+                        "label-md": ["Manrope"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "700"}],
+                        "body-lg": ["18px", {"lineHeight": "26px", "fontWeight": "400"}],
+                        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body-md selection:bg-primary/30 overflow-hidden">
+<!-- Camera Background View -->
+<div class="fixed inset-0 z-0 overflow-hidden">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="A cinematic, high-resolution close-up of a protein bar packaging held in a hand, viewed through a professional camera lens with a shallow depth of field. The lighting is crisp and modern, featuring blue and purple ambient tones consistent with a dark-tech fitness app. In the center, a food barcode is sharply focused, ready for digital scanning. The atmosphere is professional, tech-forward, and energetic, emphasizing clarity and high performance." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAXD3DSqRglJqmy4mIl0dV6RXGL2eTQleGi_IAXYmoPCDXtsZ6OOhfnkotGm61KZ9CVC2GVYAueXn5P3xq9fCS1SZ-8Pfg6nEeQnHEa4Veblmy8p1GLamzKv_wOG1GANlZ_ipK7qCqwKGkz-F7Ml5DzmsGCYorrjUyFjmWQNrj9pNgARThwcnrfv2KRsGZJSFAjZltZ45AaxnLPZTvQVzk0IM_VRWG1sUZYOSIe_3JxlUB6vaU5q0nghQ')">
+</div>
+</div>
+<!-- Interface Layer -->
+<div class="relative z-10 flex flex-col h-screen">
+<!-- Top App Bar (Task Focused - No Global Nav) -->
+<header class="flex justify-between items-center w-full px-margin-mobile h-20 pt-safe transition-all bg-transparent backdrop-blur-sm">
+<button class="flex items-center justify-center w-10 h-10 rounded-full bg-surface-container-lowest/40 text-on-surface hover:bg-surface-variant/20 transition-transform active:scale-95" onclick="window.location.href='{{DATA:SCREEN:SCREEN_5}}'">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<div class="flex flex-col items-center">
+<span class="font-label-md text-label-md text-on-surface uppercase tracking-widest opacity-80">Scan Food</span>
+</div>
+<button class="flex items-center justify-center w-10 h-10 rounded-full bg-surface-container-lowest/40 text-on-surface hover:bg-surface-variant/20 transition-transform active:scale-95" id="flash-toggle">
+<span class="material-symbols-outlined" data-icon="flashlight_on">flashlight_on</span>
+</button>
+</header>
+<!-- Main Scanning Area -->
+<main class="flex-grow relative flex flex-items-center justify-center overflow-hidden">
+<!-- Cutout Overlays (The Frame) -->
+<div class="absolute inset-0 flex flex-col">
+<div class="glass-overlay flex-grow"></div>
+<div class="flex h-[280px]">
+<div class="glass-overlay w-gutter md:w-[25%] lg:w-[35%]"></div>
+<div class="relative w-full max-w-[320px] bg-transparent overflow-hidden cursor-pointer" id="scan-target" onclick="window.location.href='{{DATA:SCREEN:SCREEN_2}}'">
+<!-- Corners -->
+<div class="scanner-corner border-t-4 border-l-4 left-0 top-0 rounded-tl-xl"></div>
+<div class="scanner-corner border-t-4 border-r-4 right-0 top-0 rounded-tr-xl"></div>
+<div class="scanner-corner border-b-4 border-l-4 left-0 bottom-0 rounded-bl-xl"></div>
+<div class="scanner-corner border-b-4 border-r-4 right-0 bottom-0 rounded-br-xl"></div>
+<!-- Animated Scanning Line -->
+<div class="scan-frame-gradient"></div>
+<!-- Tech Data Overlays (Decorative) -->
+<div class="absolute top-4 left-4 font-label-sm text-label-sm text-primary opacity-60 flex gap-2">
+<span class="animate-pulse">REC</span>
+<span class="">4K 60FPS</span>
+</div>
+</div>
+<div class="glass-overlay w-gutter md:w-[25%] lg:w-[35%]"></div>
+</div>
+<div class="glass-overlay flex-grow flex flex-col items-center justify-start pt-8 px-8">
+<p class="font-body-md text-body-md text-center text-on-surface-variant max-w-[280px]">
+                        Align the barcode within the frame to automatically log your meal.
+                    </p>
+</div>
+</div>
+</main>
+<!-- Bottom Controls -->
+<footer class="pb-xl px-margin-mobile flex flex-col items-center gap-6 bg-transparent">
+<!-- Recent Scans / Quick Actions Pill -->
+<div class="flex gap-4">
+<button class="bg-surface-container-high/60 backdrop-blur-md px-6 py-2 rounded-full flex items-center gap-2 hover:bg-surface-variant/40 transition-all active:scale-95 group">
+<span class="material-symbols-outlined text-primary text-sm" data-icon="history">history</span>
+<span class="font-label-md text-label-md">Recent</span>
+</button>
+<button class="bg-surface-container-high/60 backdrop-blur-md px-6 py-2 rounded-full flex items-center gap-2 hover:bg-surface-variant/40 transition-all active:scale-95 group">
+<span class="material-symbols-outlined text-primary text-sm" data-icon="favorite">favorite</span>
+<span class="font-label-md text-label-md">Favorites</span>
+</button>
+</div>
+<!-- Manual Input Button -->
+<button class="group w-full max-w-sm flex flex-col items-center gap-2 py-4 rounded-xl transition-all cursor-pointer" onclick="window.location.href='{{DATA:SCREEN:SCREEN_6}}'">
+<span class="font-label-md text-label-md text-primary group-hover:text-primary-fixed-dim transition-colors">Enter Barcode Manually</span>
+<div class="w-12 h-[2px] bg-primary group-hover:w-24 transition-all duration-300"></div>
+</button><button class="group w-full max-w-sm flex flex-col items-center gap-2 py-2 rounded-xl transition-all opacity-80 hover:opacity-100" onclick="window.location.href='{{DATA:SCREEN:SCREEN_4}}'">
+    <span class="font-label-md text-label-md text-on-surface-variant group-hover:text-primary transition-colors">Scan Product Label</span>
+    <div class="w-8 h-[1px] bg-on-surface-variant/30 group-hover:w-16 group-hover:bg-primary transition-all duration-300"></div>
+</button>
+<!-- Decorative Visualizer -->
+<div class="flex gap-1 items-end h-4 opacity-30">
+<div class="w-1 bg-primary animate-[bounce_1.2s_infinite]"></div>
+<div class="w-1 bg-primary animate-[bounce_1.5s_infinite_0.2s]"></div>
+<div class="w-1 bg-primary animate-[bounce_1.1s_infinite_0.4s]"></div>
+<div class="w-1 bg-primary animate-[bounce_1.4s_infinite_0.1s]"></div>
+<div class="w-1 bg-primary animate-[bounce_1.3s_infinite_0.3s]"></div>
+</div>
+</footer>
+</div>
+<!-- Success Feedback Overlay (Hidden by default) -->
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-xl transition-opacity duration-300 opacity-0" id="success-feedback">
+<div class="flex flex-col items-center transition-transform duration-500 scale-100">
+<div class="w-24 h-24 rounded-full bg-tertiary-container flex items-center justify-center mb-6 shadow-[0_0_40px_rgba(0,167,75,0.4)]">
+<span class="material-symbols-outlined text-white text-5xl" data-icon="check_circle">check_circle</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface mb-2">Item Scanned</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Whey Protein Isolate - 1 Scoop</p>
+</div>
+</div>
+<script>
+        // Micro-interactions and scanner behavior
+        const flashBtn = document.getElementById('flash-toggle');
+        let flashOn = false;
+
+        flashBtn.addEventListener('click', () => {
+            flashOn = !flashOn;
+            const icon = flashBtn.querySelector('.material-symbols-outlined');
+            icon.textContent = flashOn ? 'flashlight_off' : 'flashlight_on';
+            flashBtn.classList.toggle('text-primary', flashOn);
+            flashBtn.classList.toggle('bg-primary/20', flashOn);
+        });
+
+        // Simulate a successful scan after 4 seconds
+        const scanTarget = document.getElementById('scan-target');
+        const feedback = document.getElementById('success-feedback');
+        const feedbackInner = feedback.querySelector('div');
+
+        setTimeout(() => {
+            feedback.classList.remove('opacity-0', 'pointer-events-none');
+            feedbackInner.classList.remove('scale-90');
+            feedbackInner.classList.add('scale-100');
+            
+            // Redirect back or hide after 2 seconds
+            setTimeout(() => {
+                feedback.classList.add('opacity-0');
+            }, 2000);
+        }, 5000);
+
+        // Haptic feedback simulation on interactions
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (window.navigator.vibrate) {
+                    window.navigator.vibrate(10);
+                }
+            });
+        });
+    </script>
+
+
+
+
+
+
+</body></html>

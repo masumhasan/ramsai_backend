@@ -1,0 +1,277 @@
+<!DOCTYPE html><html class="dark" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.05); opacity: 0.4; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+    
+    .scanning-pulse {
+      animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    .glass-panel {
+      background: rgba(11, 19, 38, 0.6);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .shimmer-scan {
+      background: linear-gradient(
+        to bottom,
+        transparent 0%,
+        rgba(173, 198, 255, 0.2) 50%,
+        rgba(173, 198, 255, 0.8) 50.5%,
+        rgba(173, 198, 255, 0.2) 51%,
+        transparent 100%
+      );
+      background-size: 100% 200%;
+      animation: scan-move 3s linear infinite;
+    }
+
+    @keyframes scan-move {
+      0% { background-position: 0% 100%; }
+      100% { background-position: 0% -100%; }
+    }
+
+    .safe-bottom {
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+  </style>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-dim": "#0b1326",
+            "error": "#ffb4ab",
+            "error-container": "#93000a",
+            "surface-container-highest": "#2d3449",
+            "on-tertiary-fixed-variant": "#005321",
+            "on-secondary-fixed-variant": "#6900b3",
+            "on-surface-variant": "#c2c6d6",
+            "inverse-primary": "#005ac2",
+            "tertiary": "#4ae176",
+            "on-primary-fixed-variant": "#004395",
+            "primary": "#adc6ff",
+            "surface-container": "#171f33",
+            "on-secondary-container": "#d6a9ff",
+            "on-surface": "#dae2fd",
+            "primary-fixed-dim": "#adc6ff",
+            "on-tertiary": "#003915",
+            "on-primary": "#002e6a",
+            "surface-bright": "#31394d",
+            "on-primary-fixed": "#001a42",
+            "on-error": "#690005",
+            "inverse-on-surface": "#283044",
+            "surface-container-low": "#131b2e",
+            "primary-container": "#4d8eff",
+            "on-primary-container": "#00285d",
+            "primary-fixed": "#d8e2ff",
+            "on-tertiary-fixed": "#002109",
+            "secondary-container": "#6f00be",
+            "tertiary-fixed-dim": "#4ae176",
+            "surface-tint": "#adc6ff",
+            "surface-container-high": "#222a3d",
+            "inverse-surface": "#dae2fd",
+            "on-secondary": "#490080",
+            "secondary": "#ddb7ff",
+            "secondary-fixed-dim": "#ddb7ff",
+            "outline": "#8c909f",
+            "on-error-container": "#ffdad6",
+            "on-background": "#dae2fd",
+            "on-tertiary-container": "#003111",
+            "tertiary-container": "#00a74b",
+            "surface-variant": "#2d3449",
+            "background": "#0b1326",
+            "surface-container-lowest": "#060e20",
+            "on-secondary-fixed": "#2c0051",
+            "outline-variant": "#424754",
+            "tertiary-fixed": "#6bff8f",
+            "surface": "#0b1326",
+            "secondary-fixed": "#f0dbff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "xs": "8px",
+            "lg": "24px",
+            "sm": "12px",
+            "gutter": "16px",
+            "base": "4px",
+            "xl": "32px",
+            "md": "16px",
+            "margin-mobile": "20px"
+          },
+          "fontFamily": {
+            "label-sm": ["Manrope"],
+            "headline-sm": ["Plus Jakarta Sans"],
+            "headline-md": ["Plus Jakarta Sans"],
+            "body-lg": ["Plus Jakarta Sans"],
+            "headline-lg-mobile": ["Plus Jakarta Sans"],
+            "label-md": ["Manrope"],
+            "headline-lg": ["Plus Jakarta Sans"],
+            "body-md": ["Plus Jakarta Sans"]
+          },
+          "fontSize": {
+            "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+            "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+            "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+            "body-lg": ["18px", {"lineHeight": "26px", "fontWeight": "400"}],
+            "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "700"}],
+            "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+            "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+            "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+          }
+        },
+      },
+    }
+  </script>
+</head>
+<body class="bg-background text-on-surface font-body-md overflow-hidden antialiased">
+<!-- Main Viewport (Camera Background) -->
+<main class="relative h-screen w-full flex flex-col overflow-hidden">
+<!-- Virtual Camera Feed Placeholder -->
+<div class="absolute inset-0 z-0">
+<div class="w-full h-full bg-cover bg-center" data-alt="A close-up POV shot of a modern nutritional product label held in a hand. The setting is a clean, minimalist kitchen with soft, professional cool-toned lighting. The image captures sharp text of an ingredients list and nutritional facts table against a dark, high-contrast product packaging. The style is cinematic and high-tech, fitting for a premium health and fitness app with deep blacks and neon blue subtle highlights." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDQ8PDbURldmaXrwRSgMEcmn8YQuDNfVRBiqsrgxZRc8NoFiQubjFxBbmkQDpc8Fuf0f_srNL55sX3a2hEavYlyTkUc0qQssZKaK1SjF7cMQViLoFelTi6SiULA9poPIFvn_5xzW_9yTOG3tKSF0A4xxR329nZdgt-iLbd6YqIjfSBJv0p1rdfU8oo4j-5i_xNYh_BFK9XiFsiJf5uJrqxCuqkIZPIM-WLvu3fugxpDGrcXWcGa2usspg')"></div>
+<!-- Dimming Overlay for focus -->
+<div class="absolute inset-0 bg-black/40"></div>
+</div>
+<!-- Header Section (TopAppBar Guidance) -->
+<header class="relative z-20 flex justify-between items-center w-full px-margin-mobile h-16 bg-transparent backdrop-blur-xl transition-all">
+<a href="{{DATA:SCREEN:SCREEN_8}}" class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-highest/40 text-on-surface transition-transform active:scale-95">
+<span class="material-symbols-outlined">close</span>
+</a>
+<div class="flex flex-col items-center">
+<span class="font-headline-sm text-headline-sm text-primary font-bold">Label Scan</span>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-highest/40 text-on-surface transition-transform active:scale-95" id="flash-toggle">
+<span class="material-symbols-outlined">flash_on</span>
+</button>
+</header>
+<!-- Scanning Area -->
+<div class="relative flex-grow flex flex-col items-center justify-center px-gutter z-10">
+<!-- Scanning Status -->
+<div class="mb-8 flex items-center gap-3 px-4 py-2 bg-surface-dim/80 backdrop-blur-md rounded-full border border-primary/20 shadow-lg">
+<div class="w-2.5 h-2.5 bg-tertiary rounded-full scanning-pulse shadow-[0_0_8px_#4ae176]"></div>
+<span class="font-label-md text-label-md text-on-surface tracking-wide">Scanning Label...</span>
+</div>
+<!-- Detection Frame -->
+<div class="relative w-full aspect-[4/5] max-h-[60vh] border-2 border-primary/30 rounded-[32px] overflow-hidden">
+<!-- Corner Markers -->
+<div class="absolute top-0 left-0 w-12 h-12 border-t-4 border-l-4 border-primary rounded-tl-[32px]"></div>
+<div class="absolute top-0 right-0 w-12 h-12 border-t-4 border-r-4 border-primary rounded-tr-[32px]"></div>
+<div class="absolute bottom-0 left-0 w-12 h-12 border-b-4 border-l-4 border-primary rounded-bl-[32px]"></div>
+<div class="absolute bottom-0 right-0 w-12 h-12 border-b-4 border-r-4 border-primary rounded-br-[32px]"></div>
+<!-- Animated Shimmer -->
+<div class="shimmer-scan absolute inset-0 opacity-40"></div>
+<!-- Text Detection Box Placeholder (Simulated AI) -->
+<div class="absolute top-1/4 left-1/4 right-1/4 h-12 border border-tertiary/60 bg-tertiary/10 rounded-lg flex items-center justify-center px-4 transition-all opacity-0" id="detect-1" style="opacity: 0; transform: scale(1.01755);">
+<span class="text-[10px] text-tertiary font-bold tracking-widest uppercase">NUTRITION FACTS FOUND</span>
+</div>
+<div class="absolute bottom-1/3 left-1/5 right-1/5 h-20 border border-primary/60 bg-primary/10 rounded-lg flex items-center justify-center px-4 transition-all opacity-0" id="detect-2" style="opacity: 0; transform: scale(1.01947);">
+<span class="text-[10px] text-primary font-bold tracking-widest uppercase">INGREDIENTS LIST DETECTED</span>
+</div>
+</div>
+<!-- Instructions -->
+<div class="mt-8 text-center max-w-[280px]">
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+          Align the product label or ingredients list within the frame for <span class="text-tertiary font-bold">AI analysis</span>.
+        </p>
+</div>
+</div>
+<!-- Bottom Actions Layer -->
+<footer class="relative z-20 w-full px-margin-mobile pb-10 space-y-6">
+<!-- Mode Toggle -->
+<div class="flex justify-center">
+<div class="flex bg-surface-container-low/80 backdrop-blur-md rounded-full p-1 border border-outline-variant/30">
+<a href="{{DATA:SCREEN:SCREEN_8}}" class="px-6 py-2 rounded-full font-label-md text-label-md transition-all text-on-surface-variant hover:text-on-surface flex items-center justify-center">
+            Barcode
+          </a>
+<button class="px-6 py-2 rounded-full font-label-md text-label-md transition-all bg-primary-container text-on-primary-container shadow-md">
+            Label AI
+          </button>
+</div>
+</div>
+<!-- Primary Action & Back -->
+<div class="flex flex-col items-center gap-4">
+<a href="{{DATA:SCREEN:SCREEN_2}}" class="w-full h-[56px] bg-primary rounded-[12px] flex items-center justify-center gap-2 text-on-primary font-bold text-body-lg shadow-[0_0_20px_rgba(173,198,255,0.3)] transition-transform active:scale-95">
+<span class="material-symbols-outlined">camera_enhance</span>
+<span class="">Capture Label</span>
+</a>
+<button class="flex items-center gap-2 text-primary font-label-md transition-colors hover:text-primary-fixed-dim">
+<span class="material-symbols-outlined text-[18px]">barcode_scanner</span>
+<span class="">Back to Barcode</span>
+</button>
+</div>
+</footer>
+<!-- Bottom Navigation Shell (Consistent with design system) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-safe h-20 bg-surface-container-low/90 backdrop-blur-md border-t border-outline-variant/30 md:hidden">
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant pt-2">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-sm text-label-sm">Dashboard</span>
+</div>
+<div class="flex flex-col items-center justify-center text-primary dark:text-primary font-bold border-t-2 border-primary pt-2">
+<span class="material-symbols-outlined">fitness_center</span>
+<span class="font-label-sm text-label-sm">Workout</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant pt-2">
+<span class="material-symbols-outlined">restaurant</span>
+<span class="font-label-sm text-label-sm">Nutrition</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant pt-2">
+<span class="material-symbols-outlined">show_chart</span>
+<span class="font-label-sm text-label-sm">Progress</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant pt-2">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-sm text-label-sm">Profile</span>
+</div>
+</nav>
+</main>
+<script>
+    // Micro-interactions for simulating AI detection
+    document.addEventListener('DOMContentLoaded', () => {
+      const flashBtn = document.getElementById('flash-toggle');
+      const box1 = document.getElementById('detect-1');
+      const box2 = document.getElementById('detect-2');
+      
+      let flashOn = false;
+      flashBtn.addEventListener('click', () => {
+        flashOn = !flashOn;
+        flashBtn.innerHTML = `<span class="material-symbols-outlined">${flashOn ? 'flash_off' : 'flash_on'}</span>`;
+        flashBtn.classList.toggle('text-primary', flashOn);
+        flashBtn.classList.toggle('bg-primary/10', flashOn);
+      });
+
+      // Simulate flickering detection boxes for "high-tech" feel
+      setInterval(() => {
+        if(Math.random() > 0.7) {
+          box1.style.opacity = Math.random() > 0.5 ? '1' : '0';
+          box1.style.transform = `scale(${0.98 + Math.random() * 0.04})`;
+        }
+        if(Math.random() > 0.8) {
+          box2.style.opacity = Math.random() > 0.5 ? '1' : '0';
+          box2.style.transform = `scale(${0.98 + Math.random() * 0.04})`;
+        }
+      }, 800);
+    });
+  </script>
+
+
+</body></html>
