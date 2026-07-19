@@ -15,6 +15,7 @@ const admin_routes_1 = __importDefault(require("./routes/admin.routes"));
 const subscription_routes_1 = __importDefault(require("./routes/subscription.routes"));
 const legal_content_routes_1 = __importDefault(require("./routes/legal_content.routes"));
 const notification_routes_1 = __importDefault(require("./routes/notification.routes"));
+const upload_routes_1 = __importDefault(require("./routes/upload.routes"));
 const app = (0, express_1.default)();
 // Security & Logging
 app.use((0, helmet_1.default)({
@@ -37,6 +38,7 @@ app.use('/api/logs', log_routes_1.default);
 app.use('/api/admin', admin_routes_1.default);
 app.use('/api/subscription', subscription_routes_1.default);
 app.use('/api/notifications', notification_routes_1.default);
+app.use('/api/upload', upload_routes_1.default);
 app.use('/api', legal_content_routes_1.default);
 // Error Handler
 app.use((err, req, res, next) => {
