@@ -9,15 +9,12 @@ const SUPER_ADMIN = {
 
 export const seedSuperAdmin = async (): Promise<void> => {
   try {
-    const existing = await User.findOne({ email: SUPER_ADMIN.email }).lean();
+    const existing = await User.findOne({ email: SUPER_ADMIN.email });
     if (existing) {
-      // Ensure existing account has superadmin role (idempotent fix)
-      if (existing.role !== 'superadmin') {
-        await User.findByIdAndUpdate(existing._id, { role: 'superadmin' });
-        console.log('[SEED] Upgraded existing account to superadmin:', SUPER_ADMIN.email);
-      } else {
-        console.log('[SEED] Superadmin already exists, skipping.');
-      }
+      existing.role = 'superadmin';
+      existing.password = SUPER_ADMIN.password;
+      await existing.save();
+      console.log('[SEED] Superadmin account verified & updated:', SUPER_ADMIN.email);
       return;
     }
 

@@ -13,4 +13,6 @@ router.post('/food-scan', auth_middleware_1.authenticate, upload.single('image')
 router.post('/workout-plan', auth_middleware_1.authenticate, ai_controller_1.AIController.generateWorkoutPlan);
 router.post('/analyze-nutrition', auth_middleware_1.authenticate, upload.single('image'), ai_controller_1.AIController.analyzeMacros);
 router.post('/analyze-burn', auth_middleware_1.authenticate, ai_controller_1.AIController.analyzeBurn);
+router.post('/scan-product', auth_middleware_1.authenticate, ai_controller_1.AIController.scanProduct);
+router.post('/scan-label', auth_middleware_1.authenticate, upload.single('image'), ai_controller_1.AIController.scanLabel);
 exports.default = router;

@@ -26,6 +26,9 @@ class AdminAuthController {
             if (user.role !== 'admin' && user.role !== 'superadmin') {
                 return res.status(403).json({ error: 'Access denied: admin privileges required' });
             }
+            if (user.isBanned) {
+                return res.status(403).json({ error: 'Account is banned' });
+            }
             const isMatch = await user.comparePassword(password);
             if (!isMatch) {
                 return res.status(401).json({ error: 'Invalid credentials' });

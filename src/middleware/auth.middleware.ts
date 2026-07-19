@@ -22,9 +22,13 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
     const decoded = jwt.verify(token, config.jwtSecret) as { userId: string };
     req.userId = decoded.userId;
 
-    const user = await User.findById(decoded.userId).select('role lastActiveAt').lean();
+    const user = await User.findById(decoded.userId).select('role lastActiveAt isBanned').lean();
     if (!user) {
       return res.status(401).json({ error: 'User not found' });
+    }
+
+    if (user.isBanned) {
+      return res.status(403).json({ error: 'Account is banned' });
     }
 
     req.userRole = user.role as UserRole;

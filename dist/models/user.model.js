@@ -88,6 +88,7 @@ const UserSchema = new mongoose_1.Schema({
         enum: ['inactive', 'active', 'trial', 'expired'],
         default: 'inactive',
     },
+    isBanned: { type: Boolean, default: false },
     otpCode: { type: String },
     otpExpires: { type: Date },
     hasCompletedOnboarding: { type: Boolean, default: false },

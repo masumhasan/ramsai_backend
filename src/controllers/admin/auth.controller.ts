@@ -26,6 +26,10 @@ export class AdminAuthController {
         return res.status(403).json({ error: 'Access denied: admin privileges required' });
       }
 
+      if (user.isBanned) {
+        return res.status(403).json({ error: 'Account is banned' });
+      }
+
       const isMatch = await (user as any).comparePassword(password);
       if (!isMatch) {
         return res.status(401).json({ error: 'Invalid credentials' });

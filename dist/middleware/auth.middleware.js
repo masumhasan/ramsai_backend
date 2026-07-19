@@ -16,9 +16,12 @@ const authenticate = async (req, res, next) => {
     try {
         const decoded = jsonwebtoken_1.default.verify(token, env_1.config.jwtSecret);
         req.userId = decoded.userId;
-        const user = await user_model_1.default.findById(decoded.userId).select('role lastActiveAt').lean();
+        const user = await user_model_1.default.findById(decoded.userId).select('role lastActiveAt isBanned').lean();
         if (!user) {
             return res.status(401).json({ error: 'User not found' });
+        }
+        if (user.isBanned) {
+            return res.status(403).json({ error: 'Account is banned' });
         }
         req.userRole = user.role;
         // Update lastActiveAt without blocking the request

@@ -28,6 +28,7 @@ export interface IUser extends Document {
   dietaryPreference: 'Everything' | 'Vegetarian' | 'Vegan' | 'Pascaterian' | 'Keto' | 'Paleo';
   language: 'en' | 'hi' | 'fr' | 'es' | 'English' | 'Hindi' | 'French' | 'Spanish';
   hasCompletedOnboarding: boolean;
+  isBanned?: boolean;
   nutritionalTargets?: {
     dailyCalories: number;
     dailyProtein: number;
@@ -88,6 +89,7 @@ const UserSchema: Schema = new Schema({
     enum: ['inactive', 'active', 'trial', 'expired'],
     default: 'inactive',
   },
+  isBanned: { type: Boolean, default: false },
   otpCode: { type: String },
   otpExpires: { type: Date },
   hasCompletedOnboarding: { type: Boolean, default: false },

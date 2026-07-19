@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AdminUsersListController = void 0;
 const user_model_1 = __importDefault(require("../../models/user.model"));
-const SAFE_USER_FIELDS = 'name email role createdAt lastActiveAt subscriptionStatus hasCompletedOnboarding';
+const SAFE_USER_FIELDS = 'name email role createdAt lastActiveAt subscriptionStatus hasCompletedOnboarding age gender isBanned';
 class AdminUsersListController {
     static async getUsers(req, res) {
         try {
