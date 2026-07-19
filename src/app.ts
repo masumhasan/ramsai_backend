@@ -8,6 +8,7 @@ import userRoutes from './routes/user.routes';
 import logRoutes from './routes/log.routes';
 import adminRoutes from './routes/admin.routes';
 import subscriptionRoutes from './routes/subscription.routes';
+import legalRoutes from './routes/legal_content.routes';
 
 const app = express();
 
@@ -34,6 +35,7 @@ app.use('/api/user', userRoutes);
 app.use('/api/logs', logRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/subscription', subscriptionRoutes);
+app.use('/api', legalRoutes);
 
 // Error Handler
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
