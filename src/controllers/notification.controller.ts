@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { Notification } from '../models/notification.model';
+import User from '../models/user.model';
 
 const SEED_NOTIFICATIONS = [
   {
@@ -99,7 +100,7 @@ export const getUserNotifications = async (req: Request, res: Response): Promise
       const docsToInsert = SEED_NOTIFICATIONS.map((n, idx) => ({
         ...n,
         userId,
-        createdAt: new Date(Date.now() - idx * 3600 * 1000 * 4), // spaced by hours
+        createdAt: new Date(Date.now() - idx * 3600 * 1000 * 4),
       }));
       await Notification.insertMany(docsToInsert);
       total = await Notification.countDocuments({ userId });
@@ -183,5 +184,104 @@ export const markAllNotificationsRead = async (req: Request, res: Response): Pro
   } catch (error: any) {
     console.error('Error marking all notifications as read:', error);
     res.status(500).json({ success: false, message: 'Failed to update notifications', error: error.message });
+  }
+};
+
+/**
+ * Admin: Broadcast notification to ALL users (Title, Message, Image)
+ */
+export const broadcastNotification = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { title, message, imageUrl, type = 'broadcast' } = req.body;
+
+    if (!title || typeof title !== 'string' || !title.trim()) {
+      res.status(400).json({ success: false, message: 'Notification title is required.' });
+      return;
+    }
+
+    if (!message || typeof message !== 'string' || !message.trim()) {
+      res.status(400).json({ success: false, message: 'Notification message is required.' });
+      return;
+    }
+
+    // Find all users (excluding banned users)
+    const users = await User.find({ isBanned: { $ne: true } }).select('_id');
+
+    if (users.length === 0) {
+      res.status(400).json({ success: false, message: 'No registered users found to send broadcast.' });
+      return;
+    }
+
+    const now = new Date();
+    const notificationsToInsert = users.map((u: any) => ({
+      userId: u._id,
+      title: title.trim(),
+      message: message.trim(),
+      imageUrl: imageUrl && typeof imageUrl === 'string' ? imageUrl.trim() : undefined,
+      type: type || 'broadcast',
+      isRead: false,
+      isBroadcast: true,
+      createdAt: now,
+    }));
+
+    await Notification.insertMany(notificationsToInsert);
+
+    res.status(200).json({
+      success: true,
+      message: `Broadcast notification successfully dispatched to ${users.length} users!`,
+      data: {
+        recipientsCount: users.length,
+        title,
+        message,
+        imageUrl,
+        sentAt: now,
+      },
+    });
+  } catch (error: any) {
+    console.error('Error sending notification broadcast:', error);
+    res.status(500).json({ success: false, message: 'Failed to broadcast notification', error: error.message });
+  }
+};
+
+/**
+ * Admin: Get past broadcast history logs
+ */
+export const getBroadcastHistory = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const history = await Notification.aggregate([
+      { $match: { isBroadcast: true } },
+      {
+        $group: {
+          _id: {
+            title: '$title',
+            message: '$message',
+            imageUrl: '$imageUrl',
+            createdAt: '$createdAt',
+          },
+          recipientsCount: { $sum: 1 },
+          sentAt: { $first: '$createdAt' },
+        },
+      },
+      { $sort: { sentAt: -1 } },
+      { $limit: 20 },
+      {
+        $project: {
+          _id: 0,
+          title: '$_id.title',
+          message: '$_id.message',
+          imageUrl: '$_id.imageUrl',
+          sentAt: 1,
+          recipientsCount: 1,
+        },
+      },
+    ]);
+
+    res.status(200).json({
+      success: true,
+      data: history,
+    });
+  } catch (error: any) {
+    console.error('Error fetching broadcast history:', error);
+    res.status(500).json({ success: false, message: 'Failed to fetch broadcast history', error: error.message });
   }
 };

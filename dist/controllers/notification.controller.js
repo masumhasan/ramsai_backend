@@ -1,7 +1,11 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.markAllNotificationsRead = exports.markNotificationRead = exports.getUserNotifications = void 0;
+exports.getBroadcastHistory = exports.broadcastNotification = exports.markAllNotificationsRead = exports.markNotificationRead = exports.getUserNotifications = void 0;
 const notification_model_1 = require("../models/notification.model");
+const user_model_1 = __importDefault(require("../models/user.model"));
 const SEED_NOTIFICATIONS = [
     {
         title: 'Welcome to GoCal AI! 🚀',
@@ -95,7 +99,7 @@ const getUserNotifications = async (req, res) => {
             const docsToInsert = SEED_NOTIFICATIONS.map((n, idx) => ({
                 ...n,
                 userId,
-                createdAt: new Date(Date.now() - idx * 3600 * 1000 * 4), // spaced by hours
+                createdAt: new Date(Date.now() - idx * 3600 * 1000 * 4),
             }));
             await notification_model_1.Notification.insertMany(docsToInsert);
             total = await notification_model_1.Notification.countDocuments({ userId });
@@ -172,3 +176,96 @@ const markAllNotificationsRead = async (req, res) => {
     }
 };
 exports.markAllNotificationsRead = markAllNotificationsRead;
+/**
+ * Admin: Broadcast notification to ALL users (Title, Message, Image)
+ */
+const broadcastNotification = async (req, res) => {
+    try {
+        const { title, message, imageUrl, type = 'broadcast' } = req.body;
+        if (!title || typeof title !== 'string' || !title.trim()) {
+            res.status(400).json({ success: false, message: 'Notification title is required.' });
+            return;
+        }
+        if (!message || typeof message !== 'string' || !message.trim()) {
+            res.status(400).json({ success: false, message: 'Notification message is required.' });
+            return;
+        }
+        // Find all users (excluding banned users)
+        const users = await user_model_1.default.find({ isBanned: { $ne: true } }).select('_id');
+        if (users.length === 0) {
+            res.status(400).json({ success: false, message: 'No registered users found to send broadcast.' });
+            return;
+        }
+        const now = new Date();
+        const notificationsToInsert = users.map((u) => ({
+            userId: u._id,
+            title: title.trim(),
+            message: message.trim(),
+            imageUrl: imageUrl && typeof imageUrl === 'string' ? imageUrl.trim() : undefined,
+            type: type || 'broadcast',
+            isRead: false,
+            isBroadcast: true,
+            createdAt: now,
+        }));
+        await notification_model_1.Notification.insertMany(notificationsToInsert);
+        res.status(200).json({
+            success: true,
+            message: `Broadcast notification successfully dispatched to ${users.length} users!`,
+            data: {
+                recipientsCount: users.length,
+                title,
+                message,
+                imageUrl,
+                sentAt: now,
+            },
+        });
+    }
+    catch (error) {
+        console.error('Error sending notification broadcast:', error);
+        res.status(500).json({ success: false, message: 'Failed to broadcast notification', error: error.message });
+    }
+};
+exports.broadcastNotification = broadcastNotification;
+/**
+ * Admin: Get past broadcast history logs
+ */
+const getBroadcastHistory = async (req, res) => {
+    try {
+        const history = await notification_model_1.Notification.aggregate([
+            { $match: { isBroadcast: true } },
+            {
+                $group: {
+                    _id: {
+                        title: '$title',
+                        message: '$message',
+                        imageUrl: '$imageUrl',
+                        createdAt: '$createdAt',
+                    },
+                    recipientsCount: { $sum: 1 },
+                    sentAt: { $first: '$createdAt' },
+                },
+            },
+            { $sort: { sentAt: -1 } },
+            { $limit: 20 },
+            {
+                $project: {
+                    _id: 0,
+                    title: '$_id.title',
+                    message: '$_id.message',
+                    imageUrl: '$_id.imageUrl',
+                    sentAt: 1,
+                    recipientsCount: 1,
+                },
+            },
+        ]);
+        res.status(200).json({
+            success: true,
+            data: history,
+        });
+    }
+    catch (error) {
+        console.error('Error fetching broadcast history:', error);
+        res.status(500).json({ success: false, message: 'Failed to fetch broadcast history', error: error.message });
+    }
+};
+exports.getBroadcastHistory = getBroadcastHistory;

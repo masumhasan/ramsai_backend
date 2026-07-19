@@ -50,12 +50,19 @@ const notificationSchema = new mongoose_1.Schema({
         type: String,
         required: true,
     },
+    imageUrl: {
+        type: String,
+    },
     type: {
         type: String,
-        enum: ['system', 'reminder', 'workout', 'nutrition', 'achievement', 'subscription'],
+        enum: ['system', 'reminder', 'workout', 'nutrition', 'achievement', 'subscription', 'broadcast'],
         default: 'system',
     },
     isRead: {
+        type: Boolean,
+        default: false,
+    },
+    isBroadcast: {
         type: Boolean,
         default: false,
     },
