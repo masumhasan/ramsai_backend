@@ -3,6 +3,7 @@ import { AdminAuthController } from '../controllers/admin/auth.controller';
 import { AdminUsersListController } from '../controllers/admin/users.list.controller';
 import { AdminUsersCrudController } from '../controllers/admin/users.crud.controller';
 import { AdminUsersRoleController } from '../controllers/admin/users.role.controller';
+import { AdminSubscriptionController } from '../controllers/admin/subscription.controller';
 import { authenticate } from '../middleware/auth.middleware';
 import { requireAdmin, requireSuperAdmin } from '../middleware/admin.middleware';
 
@@ -22,5 +23,9 @@ router.delete('/users/:id', authenticate, requireAdmin, AdminUsersCrudController
 
 // Role management — requires superadmin
 router.patch('/users/:id/role', authenticate, requireSuperAdmin, AdminUsersRoleController.updateRole);
+
+// Subscription plan management — requires admin
+router.get('/subscription-plans', authenticate, requireAdmin, AdminSubscriptionController.getPlans);
+router.put('/subscription-plans/:id', authenticate, requireAdmin, AdminSubscriptionController.updatePlan);
 
 export default router;

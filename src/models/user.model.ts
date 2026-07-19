@@ -29,6 +29,10 @@ export interface IUser extends Document {
   language: 'en' | 'hi' | 'fr' | 'es' | 'English' | 'Hindi' | 'French' | 'Spanish';
   hasCompletedOnboarding: boolean;
   isBanned?: boolean;
+  currentPlan?: 'basic' | 'premium';
+  subscriptionPlanId?: mongoose.Types.ObjectId;
+  hasSelectedSubscription?: boolean;
+  subscriptionExpiresAt?: Date;
   nutritionalTargets?: {
     dailyCalories: number;
     dailyProtein: number;
@@ -90,6 +94,20 @@ const UserSchema: Schema = new Schema({
     default: 'inactive',
   },
   isBanned: { type: Boolean, default: false },
+  currentPlan: {
+    type: String,
+    enum: ['basic', 'premium'],
+    default: 'basic',
+  },
+  subscriptionPlanId: {
+    type: Schema.Types.ObjectId,
+    ref: 'SubscriptionPlan',
+  },
+  hasSelectedSubscription: {
+    type: Boolean,
+    default: false,
+  },
+  subscriptionExpiresAt: { type: Date },
   otpCode: { type: String },
   otpExpires: { type: Date },
   hasCompletedOnboarding: { type: Boolean, default: false },

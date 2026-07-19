@@ -7,6 +7,7 @@ import authRoutes from './routes/auth.routes';
 import userRoutes from './routes/user.routes';
 import logRoutes from './routes/log.routes';
 import adminRoutes from './routes/admin.routes';
+import subscriptionRoutes from './routes/subscription.routes';
 
 const app = express();
 
@@ -32,6 +33,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/logs', logRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/subscription', subscriptionRoutes);
 
 // Error Handler
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {

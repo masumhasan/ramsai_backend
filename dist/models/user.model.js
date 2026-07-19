@@ -89,6 +89,20 @@ const UserSchema = new mongoose_1.Schema({
         default: 'inactive',
     },
     isBanned: { type: Boolean, default: false },
+    currentPlan: {
+        type: String,
+        enum: ['basic', 'premium'],
+        default: 'basic',
+    },
+    subscriptionPlanId: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        ref: 'SubscriptionPlan',
+    },
+    hasSelectedSubscription: {
+        type: Boolean,
+        default: false,
+    },
+    subscriptionExpiresAt: { type: Date },
     otpCode: { type: String },
     otpExpires: { type: Date },
     hasCompletedOnboarding: { type: Boolean, default: false },

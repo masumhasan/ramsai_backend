@@ -7,6 +7,7 @@ const app_1 = __importDefault(require("./app"));
 const env_1 = require("./config/env");
 const database_1 = require("./config/database");
 const seed_admin_1 = require("./scripts/seed-admin");
+const seed_subscription_plans_1 = require("./scripts/seed-subscription-plans");
 const startServer = async () => {
     try {
         const mongoConnected = await (0, database_1.connectDatabase)();
@@ -20,6 +21,7 @@ const startServer = async () => {
         if (mongoConnected) {
             console.log('MongoDB connected and working');
             await (0, seed_admin_1.seedSuperAdmin)();
+            await (0, seed_subscription_plans_1.seedSubscriptionPlans)();
         }
         else {
             console.error('MongoDB failed to connect');

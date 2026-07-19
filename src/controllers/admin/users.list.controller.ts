@@ -5,7 +5,7 @@ import User from '../../models/user.model';
 type SortField = 'createdAt' | 'lastActiveAt' | 'role' | 'name';
 type SortOrder = 'asc' | 'desc';
 
-const SAFE_USER_FIELDS = 'name email role createdAt lastActiveAt subscriptionStatus hasCompletedOnboarding age gender isBanned';
+const SAFE_USER_FIELDS = 'name email role createdAt lastActiveAt subscriptionStatus hasCompletedOnboarding age gender isBanned currentPlan hasSelectedSubscription';
 
 export class AdminUsersListController {
   public static async getUsers(req: AuthRequest, res: Response) {
