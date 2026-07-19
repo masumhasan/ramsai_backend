@@ -82,7 +82,7 @@ const SEED_NOTIFICATIONS = [
  */
 export const getUserNotifications = async (req: Request, res: Response): Promise<void> => {
   try {
-    const userId = (req as any).user?._id;
+    const userId = (req as any).userId || (req as any).user?._id;
 
     if (!userId) {
       res.status(401).json({ success: false, message: 'Unauthorized user' });
@@ -140,7 +140,7 @@ export const getUserNotifications = async (req: Request, res: Response): Promise
  */
 export const markNotificationRead = async (req: Request, res: Response): Promise<void> => {
   try {
-    const userId = (req as any).user?._id;
+    const userId = (req as any).userId || (req as any).user?._id;
     const { id } = req.params;
 
     const notification = await Notification.findOneAndUpdate(
@@ -172,7 +172,7 @@ export const markNotificationRead = async (req: Request, res: Response): Promise
  */
 export const markAllNotificationsRead = async (req: Request, res: Response): Promise<void> => {
   try {
-    const userId = (req as any).user?._id;
+    const userId = (req as any).userId || (req as any).user?._id;
 
     await Notification.updateMany({ userId, isRead: false }, { isRead: true });
 

@@ -32,6 +32,7 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
     }
 
     req.userRole = user.role as UserRole;
+    (req as any).user = user;
 
     // Update lastActiveAt without blocking the request
     User.findByIdAndUpdate(decoded.userId, { lastActiveAt: new Date() }).exec();

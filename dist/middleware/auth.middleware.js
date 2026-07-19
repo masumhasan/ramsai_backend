@@ -24,6 +24,7 @@ const authenticate = async (req, res, next) => {
             return res.status(403).json({ error: 'Account is banned' });
         }
         req.userRole = user.role;
+        req.user = user;
         // Update lastActiveAt without blocking the request
         user_model_1.default.findByIdAndUpdate(decoded.userId, { lastActiveAt: new Date() }).exec();
         next();
