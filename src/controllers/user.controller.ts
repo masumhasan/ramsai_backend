@@ -1,6 +1,7 @@
 import { Response } from 'express';
 import { AuthRequest } from '../middleware/auth.middleware';
 import User from '../models/user.model';
+import Feedback from '../models/feedback.model';
 
 export class UserController {
   public static async getProfile(req: AuthRequest, res: Response) {
@@ -47,6 +48,35 @@ export class UserController {
     } catch (error: any) {
       console.error(`[USER ERROR] Profile update failed: ${error.message}`);
       return res.status(500).json({ error: error.message || 'Internal server error' });
+    }
+  }
+
+  public static async submitFeedback(req: AuthRequest, res: Response) {
+    try {
+      const { title, description, images } = req.body;
+
+      if (!title || !description) {
+        return res.status(400).json({ error: 'Title and description are required' });
+      }
+
+      const feedback = new Feedback({
+        userId: req.userId,
+        title,
+        description,
+        images: images || [],
+      });
+
+      await feedback.save();
+
+      console.log(`[USER] 📝 Feedback submitted by user ${req.userId}`);
+
+      return res.status(201).json({
+        message: 'Feedback submitted successfully',
+        feedback
+      });
+    } catch (error: any) {
+      console.error('[USER ERROR] Submit feedback failed:', error);
+      return res.status(500).json({ error: 'Internal server error' });
     }
   }
 }

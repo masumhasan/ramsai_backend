@@ -6,5 +6,6 @@ const router = Router();
 
 router.get('/profile', authenticate, UserController.getProfile);
 router.put('/profile', authenticate, UserController.updateProfile);
+router.post('/feedback', authenticate, UserController.submitFeedback);
 
 export default router;

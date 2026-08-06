@@ -4,6 +4,7 @@ import { AdminUsersListController } from '../controllers/admin/users.list.contro
 import { AdminUsersCrudController } from '../controllers/admin/users.crud.controller';
 import { AdminUsersRoleController } from '../controllers/admin/users.role.controller';
 import { AdminSubscriptionController } from '../controllers/admin/subscription.controller';
+import { AdminFeedbackController } from '../controllers/admin/feedback.controller';
 import { authenticate } from '../middleware/auth.middleware';
 import { requireAdmin, requireSuperAdmin } from '../middleware/admin.middleware';
 
@@ -27,5 +28,8 @@ router.patch('/users/:id/role', authenticate, requireSuperAdmin, AdminUsersRoleC
 // Subscription plan management — requires admin
 router.get('/subscription-plans', authenticate, requireAdmin, AdminSubscriptionController.getPlans);
 router.put('/subscription-plans/:id', authenticate, requireAdmin, AdminSubscriptionController.updatePlan);
+
+// Feedback management — requires admin
+router.get('/feedbacks', authenticate, requireAdmin, AdminFeedbackController.getFeedbacks);
 
 export default router;

@@ -14,4 +14,16 @@ const router = Router();
 // POST /api/upload/image (Admin only)
 router.post('/image', authenticate, requireAdmin, upload.single('image'), uploadImage);
 
+// POST /api/upload/feedback-image (Authenticated Users, routes to feedbacks/ folder)
+router.post(
+  '/feedback-image',
+  authenticate,
+  upload.single('image'),
+  (req, res, next) => {
+    req.body.folder = 'feedbacks';
+    next();
+  },
+  uploadImage
+);
+
 export default router;
