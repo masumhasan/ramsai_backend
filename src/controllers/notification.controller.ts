@@ -246,6 +246,66 @@ export const clearAllNotifications = async (req: Request, res: Response): Promis
 };
 
 /**
+ * Create a user reminder/system notification (e.g. Drink Water, Meal Log, Workout)
+ */
+export const createUserNotification = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userId = (req as any).userId || (req as any).user?._id;
+    const { title, message, type } = req.body;
+
+    if (!userId) {
+      res.status(401).json({ success: false, message: 'Unauthorized user' });
+      return;
+    }
+
+    if (!title || !message) {
+      res.status(400).json({ success: false, message: 'Title and message are required' });
+      return;
+    }
+
+    // Check if duplicate notification already created today for this user & title
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const existing = await Notification.findOne({
+      userId,
+      title: title.trim(),
+      createdAt: { $gte: startOfDay },
+    });
+
+    if (existing) {
+      res.status(200).json({
+        success: true,
+        message: 'Notification already exists for today',
+        data: existing,
+      });
+      return;
+    }
+
+    const notification = new Notification({
+      userId,
+      title: title.trim(),
+      message: message.trim(),
+      type: type || 'reminder',
+      isRead: false,
+    });
+
+    await notification.save();
+
+    const unreadCount = await Notification.countDocuments({ userId, isRead: false });
+
+    res.status(201).json({
+      success: true,
+      message: 'Notification created successfully',
+      data: { notification, unreadCount },
+    });
+  } catch (error: any) {
+    console.error('Error creating user notification:', error);
+    res.status(500).json({ success: false, message: 'Failed to create notification', error: error.message });
+  }
+};
+
+/**
  * Admin: Broadcast notification to ALL users (Title, Message, Image)
  */
 export const broadcastNotification = async (req: Request, res: Response): Promise<void> => {
