@@ -188,6 +188,64 @@ export const markAllNotificationsRead = async (req: Request, res: Response): Pro
 };
 
 /**
+ * Delete a single notification for user
+ */
+export const deleteNotification = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userId = (req as any).userId || (req as any).user?._id;
+    const { id } = req.params;
+
+    if (!userId) {
+      res.status(401).json({ success: false, message: 'Unauthorized user' });
+      return;
+    }
+
+    const notification = await Notification.findOneAndDelete({ _id: id, userId });
+
+    if (!notification) {
+      res.status(404).json({ success: false, message: 'Notification not found' });
+      return;
+    }
+
+    const unreadCount = await Notification.countDocuments({ userId, isRead: false });
+
+    res.status(200).json({
+      success: true,
+      message: 'Notification deleted successfully',
+      data: { id, unreadCount },
+    });
+  } catch (error: any) {
+    console.error('Error deleting notification:', error);
+    res.status(500).json({ success: false, message: 'Failed to delete notification', error: error.message });
+  }
+};
+
+/**
+ * Clear all notifications for user
+ */
+export const clearAllNotifications = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userId = (req as any).userId || (req as any).user?._id;
+
+    if (!userId) {
+      res.status(401).json({ success: false, message: 'Unauthorized user' });
+      return;
+    }
+
+    await Notification.deleteMany({ userId });
+
+    res.status(200).json({
+      success: true,
+      message: 'All notifications cleared successfully',
+      data: { unreadCount: 0 },
+    });
+  } catch (error: any) {
+    console.error('Error clearing notifications:', error);
+    res.status(500).json({ success: false, message: 'Failed to clear notifications', error: error.message });
+  }
+};
+
+/**
  * Admin: Broadcast notification to ALL users (Title, Message, Image)
  */
 export const broadcastNotification = async (req: Request, res: Response): Promise<void> => {

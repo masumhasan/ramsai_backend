@@ -3,6 +3,8 @@ import {
   getUserNotifications,
   markNotificationRead,
   markAllNotificationsRead,
+  deleteNotification,
+  clearAllNotifications,
   broadcastNotification,
   getBroadcastHistory,
 } from '../controllers/notification.controller';
@@ -15,6 +17,8 @@ const router = Router();
 router.get('/', authenticate, getUserNotifications);
 router.patch('/read-all', authenticate, markAllNotificationsRead);
 router.patch('/:id/read', authenticate, markNotificationRead);
+router.delete('/clear-all', authenticate, clearAllNotifications);
+router.delete('/:id', authenticate, deleteNotification);
 
 // Admin Broadcast endpoints
 router.post('/broadcast', authenticate, requireAdmin, broadcastNotification);
