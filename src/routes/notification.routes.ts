@@ -5,6 +5,7 @@ import {
   markAllNotificationsRead,
   deleteNotification,
   clearAllNotifications,
+  createUserNotification,
   broadcastNotification,
   getBroadcastHistory,
 } from '../controllers/notification.controller';
@@ -15,6 +16,7 @@ const router = Router();
 
 // User endpoints
 router.get('/', authenticate, getUserNotifications);
+router.post('/reminder', authenticate, createUserNotification);
 router.patch('/read-all', authenticate, markAllNotificationsRead);
 router.patch('/:id/read', authenticate, markNotificationRead);
 router.delete('/clear-all', authenticate, clearAllNotifications);
