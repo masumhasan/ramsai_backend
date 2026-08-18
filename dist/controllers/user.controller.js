@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserController = void 0;
 const user_model_1 = __importDefault(require("../models/user.model"));
+const feedback_model_1 = __importDefault(require("../models/feedback.model"));
 class UserController {
     static async getProfile(req, res) {
         try {
@@ -43,6 +44,30 @@ class UserController {
         catch (error) {
             console.error(`[USER ERROR] Profile update failed: ${error.message}`);
             return res.status(500).json({ error: error.message || 'Internal server error' });
+        }
+    }
+    static async submitFeedback(req, res) {
+        try {
+            const { title, description, images } = req.body;
+            if (!title || !description) {
+                return res.status(400).json({ error: 'Title and description are required' });
+            }
+            const feedback = new feedback_model_1.default({
+                userId: req.userId,
+                title,
+                description,
+                images: images || [],
+            });
+            await feedback.save();
+            console.log(`[USER] 📝 Feedback submitted by user ${req.userId}`);
+            return res.status(201).json({
+                message: 'Feedback submitted successfully',
+                feedback
+            });
+        }
+        catch (error) {
+            console.error('[USER ERROR] Submit feedback failed:', error);
+            return res.status(500).json({ error: 'Internal server error' });
         }
     }
 }

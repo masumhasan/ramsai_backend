@@ -6,4 +6,5 @@ const auth_middleware_1 = require("../middleware/auth.middleware");
 const router = (0, express_1.Router)();
 router.get('/profile', auth_middleware_1.authenticate, user_controller_1.UserController.getProfile);
 router.put('/profile', auth_middleware_1.authenticate, user_controller_1.UserController.updateProfile);
+router.post('/feedback', auth_middleware_1.authenticate, user_controller_1.UserController.submitFeedback);
 exports.default = router;

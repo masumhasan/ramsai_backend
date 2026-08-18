@@ -8,6 +8,9 @@ import {
   createUserNotification,
   broadcastNotification,
   getBroadcastHistory,
+  registerFcmToken,
+  removeFcmToken,
+  updateNotificationPreferences,
 } from '../controllers/notification.controller';
 import { authenticate } from '../middleware/auth.middleware';
 import { requireAdmin } from '../middleware/admin.middleware';
@@ -17,6 +20,9 @@ const router = Router();
 // User endpoints
 router.get('/', authenticate, getUserNotifications);
 router.post('/reminder', authenticate, createUserNotification);
+router.post('/fcm-token', authenticate, registerFcmToken);
+router.delete('/fcm-token', authenticate, removeFcmToken);
+router.patch('/preferences', authenticate, updateNotificationPreferences);
 router.patch('/read-all', authenticate, markAllNotificationsRead);
 router.patch('/:id/read', authenticate, markNotificationRead);
 router.delete('/clear-all', authenticate, clearAllNotifications);

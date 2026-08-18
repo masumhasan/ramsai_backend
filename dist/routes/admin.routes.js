@@ -6,6 +6,7 @@ const users_list_controller_1 = require("../controllers/admin/users.list.control
 const users_crud_controller_1 = require("../controllers/admin/users.crud.controller");
 const users_role_controller_1 = require("../controllers/admin/users.role.controller");
 const subscription_controller_1 = require("../controllers/admin/subscription.controller");
+const feedback_controller_1 = require("../controllers/admin/feedback.controller");
 const auth_middleware_1 = require("../middleware/auth.middleware");
 const admin_middleware_1 = require("../middleware/admin.middleware");
 const router = (0, express_1.Router)();
@@ -24,4 +25,6 @@ router.patch('/users/:id/role', auth_middleware_1.authenticate, admin_middleware
 // Subscription plan management — requires admin
 router.get('/subscription-plans', auth_middleware_1.authenticate, admin_middleware_1.requireAdmin, subscription_controller_1.AdminSubscriptionController.getPlans);
 router.put('/subscription-plans/:id', auth_middleware_1.authenticate, admin_middleware_1.requireAdmin, subscription_controller_1.AdminSubscriptionController.updatePlan);
+// Feedback management — requires admin
+router.get('/feedbacks', auth_middleware_1.authenticate, admin_middleware_1.requireAdmin, feedback_controller_1.AdminFeedbackController.getFeedbacks);
 exports.default = router;

@@ -111,6 +111,13 @@ const UserSchema = new mongoose_1.Schema({
         dailyProtein: { type: Number },
         dailyCarbs: { type: Number },
         dailyFat: { type: Number }
+    },
+    notificationPreferences: {
+        master: { type: Boolean, default: true },
+        drinkWater: { type: Boolean, default: false },
+        mealLog: { type: Boolean, default: false },
+        workout: { type: Boolean, default: false },
+        broadcast: { type: Boolean, default: true },
     }
 }, { timestamps: true });
 UserSchema.pre('save', async function () {

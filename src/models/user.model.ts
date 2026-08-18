@@ -39,6 +39,13 @@ export interface IUser extends Document {
     dailyCarbs: number;
     dailyFat: number;
   };
+  notificationPreferences?: {
+    master: boolean;
+    drinkWater: boolean;
+    mealLog: boolean;
+    workout: boolean;
+    broadcast: boolean;
+  };
   createdAt: Date;
   updatedAt: Date;
 }
@@ -116,6 +123,13 @@ const UserSchema: Schema = new Schema({
     dailyProtein: { type: Number },
     dailyCarbs: { type: Number },
     dailyFat: { type: Number }
+  },
+  notificationPreferences: {
+    master: { type: Boolean, default: true },
+    drinkWater: { type: Boolean, default: false },
+    mealLog: { type: Boolean, default: false },
+    workout: { type: Boolean, default: false },
+    broadcast: { type: Boolean, default: true },
   }
 }, { timestamps: true });
 

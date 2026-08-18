@@ -15,4 +15,9 @@ const upload = (0, multer_1.default)({
 const router = (0, express_1.Router)();
 // POST /api/upload/image (Admin only)
 router.post('/image', auth_middleware_1.authenticate, admin_middleware_1.requireAdmin, upload.single('image'), upload_controller_1.uploadImage);
+// POST /api/upload/feedback-image (Authenticated Users, routes to feedbacks/ folder)
+router.post('/feedback-image', auth_middleware_1.authenticate, upload.single('image'), (req, res, next) => {
+    req.body.folder = 'feedbacks';
+    next();
+}, upload_controller_1.uploadImage);
 exports.default = router;

@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import { Notification } from '../models/notification.model';
 import User from '../models/user.model';
+import FcmToken from '../models/fcmToken.model';
+import { getFirebaseMessaging } from '../config/firebase.config';
 
 const SEED_NOTIFICATIONS = [
   {
@@ -306,7 +308,118 @@ export const createUserNotification = async (req: Request, res: Response): Promi
 };
 
 /**
- * Admin: Broadcast notification to ALL users (Title, Message, Image)
+ * Register or update user FCM device token
+ */
+export const registerFcmToken = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userId = (req as any).userId || (req as any).user?._id;
+    const { token, deviceType } = req.body;
+
+    if (!userId) {
+      res.status(401).json({ success: false, message: 'Unauthorized user' });
+      return;
+    }
+
+    if (!token || typeof token !== 'string') {
+      res.status(400).json({ success: false, message: 'FCM token is required' });
+      return;
+    }
+
+    const fcmRecord = await FcmToken.findOneAndUpdate(
+      { token: token.trim() },
+      {
+        userId,
+        token: token.trim(),
+        deviceType: deviceType || 'android',
+        updatedAt: new Date(),
+      },
+      { upsert: true, new: true }
+    );
+
+    res.status(200).json({
+      success: true,
+      message: 'FCM token registered successfully',
+      data: fcmRecord,
+    });
+  } catch (error: any) {
+    console.error('Error registering FCM token:', error);
+    res.status(500).json({ success: false, message: 'Failed to register FCM token', error: error.message });
+  }
+};
+
+/**
+ * Delete FCM device token (e.g. on logout)
+ */
+export const removeFcmToken = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userId = (req as any).userId || (req as any).user?._id;
+    const { token } = req.body;
+
+    if (!userId) {
+      res.status(401).json({ success: false, message: 'Unauthorized user' });
+      return;
+    }
+
+    if (!token) {
+      await FcmToken.deleteMany({ userId });
+    } else {
+      await FcmToken.deleteOne({ userId, token: token.trim() });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'FCM token(s) removed successfully',
+    });
+  } catch (error: any) {
+    console.error('Error removing FCM token:', error);
+    res.status(500).json({ success: false, message: 'Failed to remove FCM token', error: error.message });
+  }
+};
+
+/**
+ * Update user notification preferences
+ */
+export const updateNotificationPreferences = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userId = (req as any).userId || (req as any).user?._id;
+    const { preferences } = req.body;
+
+    if (!userId) {
+      res.status(401).json({ success: false, message: 'Unauthorized user' });
+      return;
+    }
+
+    if (!preferences || typeof preferences !== 'object') {
+      res.status(400).json({ success: false, message: 'Notification preferences object is required' });
+      return;
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      res.status(404).json({ success: false, message: 'User not found' });
+      return;
+    }
+
+    user.notificationPreferences = {
+      ...user.notificationPreferences,
+      ...preferences,
+    };
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Notification preferences updated successfully',
+      data: user.notificationPreferences,
+    });
+  } catch (error: any) {
+    console.error('Error updating notification preferences:', error);
+    res.status(500).json({ success: false, message: 'Failed to update preferences', error: error.message });
+  }
+};
+
+/**
+ * Admin: Broadcast notification to ALL users (Title, Message, Image) with FCM Push Notifications
  */
 export const broadcastNotification = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -322,17 +435,23 @@ export const broadcastNotification = async (req: Request, res: Response): Promis
       return;
     }
 
-    // Find all users (excluding banned users)
-    const users = await User.find({ isBanned: { $ne: true } }).select('_id');
+    // Find all active users who have broadcast and master notifications enabled
+    const eligibleUsers = await User.find({
+      isBanned: { $ne: true },
+      'notificationPreferences.master': { $ne: false },
+      'notificationPreferences.broadcast': { $ne: false },
+    }).select('_id');
 
-    if (users.length === 0) {
-      res.status(400).json({ success: false, message: 'No registered users found to send broadcast.' });
+    const eligibleUserIds = eligibleUsers.map((u: any) => u._id);
+
+    if (eligibleUserIds.length === 0) {
+      res.status(400).json({ success: false, message: 'No eligible registered users found for broadcast.' });
       return;
     }
 
     const now = new Date();
-    const notificationsToInsert = users.map((u: any) => ({
-      userId: u._id,
+    const notificationsToInsert = eligibleUserIds.map((uId: any) => ({
+      userId: uId,
       title: title.trim(),
       message: message.trim(),
       imageUrl: imageUrl && typeof imageUrl === 'string' ? imageUrl.trim() : undefined,
@@ -344,11 +463,86 @@ export const broadcastNotification = async (req: Request, res: Response): Promis
 
     await Notification.insertMany(notificationsToInsert);
 
+    // Send FCM Push Notifications via Firebase Admin SDK
+    let pushSuccessCount = 0;
+    const messaging = getFirebaseMessaging();
+
+    if (messaging && eligibleUserIds.length > 0) {
+      const fcmTokens = await FcmToken.find({ userId: { $in: eligibleUserIds } }).select('token');
+      const tokens = fcmTokens.map((t: any) => t.token).filter(Boolean);
+
+      if (tokens.length > 0) {
+        const batchSize = 500;
+        for (let i = 0; i < tokens.length; i += batchSize) {
+          const batchTokens = tokens.slice(i, i + batchSize);
+          try {
+            const response = await messaging.sendEachForMulticast({
+              tokens: batchTokens,
+              notification: {
+                title: title.trim(),
+                body: message.trim(),
+                ...(imageUrl ? { imageUrl: imageUrl.trim() } : {}),
+              },
+              data: {
+                type: type || 'broadcast',
+                title: title.trim(),
+                message: message.trim(),
+                ...(imageUrl ? { imageUrl: imageUrl.trim() } : {}),
+              },
+              android: {
+                priority: 'high',
+                notification: {
+                  channelId: 'broadcast_reminders',
+                  priority: 'high',
+                  sound: 'default',
+                },
+              },
+              apns: {
+                payload: {
+                  aps: {
+                    alert: {
+                      title: title.trim(),
+                      body: message.trim(),
+                    },
+                    sound: 'default',
+                    badge: 1,
+                  },
+                },
+              },
+            });
+
+            pushSuccessCount += response.successCount;
+
+            // Remove invalid/stale tokens
+            const staleTokens: string[] = [];
+            response.responses.forEach((resp: any, idx: number) => {
+              if (!resp.success && resp.error) {
+                const errorCode = resp.error.code;
+                if (
+                  errorCode === 'messaging/invalid-registration-token' ||
+                  errorCode === 'messaging/registration-token-not-registered'
+                ) {
+                  staleTokens.push(batchTokens[idx]);
+                }
+              }
+            });
+
+            if (staleTokens.length > 0) {
+              await FcmToken.deleteMany({ token: { $in: staleTokens } });
+            }
+          } catch (fcmError: any) {
+            console.error('[FCM ERROR] Multicast send failed:', fcmError);
+          }
+        }
+      }
+    }
+
     res.status(200).json({
       success: true,
-      message: `Broadcast notification successfully dispatched to ${users.length} users!`,
+      message: `Broadcast notification successfully dispatched to ${eligibleUserIds.length} users (${pushSuccessCount} push notifications sent)!`,
       data: {
-        recipientsCount: users.length,
+        recipientsCount: eligibleUserIds.length,
+        pushSuccessCount,
         title,
         message,
         imageUrl,

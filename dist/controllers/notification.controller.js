@@ -3,9 +3,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getBroadcastHistory = exports.broadcastNotification = exports.markAllNotificationsRead = exports.markNotificationRead = exports.getUserNotifications = void 0;
+exports.getBroadcastHistory = exports.broadcastNotification = exports.updateNotificationPreferences = exports.removeFcmToken = exports.registerFcmToken = exports.createUserNotification = exports.clearAllNotifications = exports.deleteNotification = exports.markAllNotificationsRead = exports.markNotificationRead = exports.getUserNotifications = void 0;
 const notification_model_1 = require("../models/notification.model");
 const user_model_1 = __importDefault(require("../models/user.model"));
+const fcmToken_model_1 = __importDefault(require("../models/fcmToken.model"));
+const firebase_config_1 = require("../config/firebase.config");
 const SEED_NOTIFICATIONS = [
     {
         title: 'Welcome to GoCal AI! 🚀',
@@ -177,7 +179,209 @@ const markAllNotificationsRead = async (req, res) => {
 };
 exports.markAllNotificationsRead = markAllNotificationsRead;
 /**
- * Admin: Broadcast notification to ALL users (Title, Message, Image)
+ * Delete a single notification for user
+ */
+const deleteNotification = async (req, res) => {
+    try {
+        const userId = req.userId || req.user?._id;
+        const { id } = req.params;
+        if (!userId) {
+            res.status(401).json({ success: false, message: 'Unauthorized user' });
+            return;
+        }
+        const notification = await notification_model_1.Notification.findOneAndDelete({ _id: id, userId });
+        if (!notification) {
+            res.status(404).json({ success: false, message: 'Notification not found' });
+            return;
+        }
+        const unreadCount = await notification_model_1.Notification.countDocuments({ userId, isRead: false });
+        res.status(200).json({
+            success: true,
+            message: 'Notification deleted successfully',
+            data: { id, unreadCount },
+        });
+    }
+    catch (error) {
+        console.error('Error deleting notification:', error);
+        res.status(500).json({ success: false, message: 'Failed to delete notification', error: error.message });
+    }
+};
+exports.deleteNotification = deleteNotification;
+/**
+ * Clear all notifications for user
+ */
+const clearAllNotifications = async (req, res) => {
+    try {
+        const userId = req.userId || req.user?._id;
+        if (!userId) {
+            res.status(401).json({ success: false, message: 'Unauthorized user' });
+            return;
+        }
+        await notification_model_1.Notification.deleteMany({ userId });
+        res.status(200).json({
+            success: true,
+            message: 'All notifications cleared successfully',
+            data: { unreadCount: 0 },
+        });
+    }
+    catch (error) {
+        console.error('Error clearing notifications:', error);
+        res.status(500).json({ success: false, message: 'Failed to clear notifications', error: error.message });
+    }
+};
+exports.clearAllNotifications = clearAllNotifications;
+/**
+ * Create a user reminder/system notification (e.g. Drink Water, Meal Log, Workout)
+ */
+const createUserNotification = async (req, res) => {
+    try {
+        const userId = req.userId || req.user?._id;
+        const { title, message, type } = req.body;
+        if (!userId) {
+            res.status(401).json({ success: false, message: 'Unauthorized user' });
+            return;
+        }
+        if (!title || !message) {
+            res.status(400).json({ success: false, message: 'Title and message are required' });
+            return;
+        }
+        // Check if duplicate notification already created today for this user & title
+        const startOfDay = new Date();
+        startOfDay.setHours(0, 0, 0, 0);
+        const existing = await notification_model_1.Notification.findOne({
+            userId,
+            title: title.trim(),
+            createdAt: { $gte: startOfDay },
+        });
+        if (existing) {
+            res.status(200).json({
+                success: true,
+                message: 'Notification already exists for today',
+                data: existing,
+            });
+            return;
+        }
+        const notification = new notification_model_1.Notification({
+            userId,
+            title: title.trim(),
+            message: message.trim(),
+            type: type || 'reminder',
+            isRead: false,
+        });
+        await notification.save();
+        const unreadCount = await notification_model_1.Notification.countDocuments({ userId, isRead: false });
+        res.status(201).json({
+            success: true,
+            message: 'Notification created successfully',
+            data: { notification, unreadCount },
+        });
+    }
+    catch (error) {
+        console.error('Error creating user notification:', error);
+        res.status(500).json({ success: false, message: 'Failed to create notification', error: error.message });
+    }
+};
+exports.createUserNotification = createUserNotification;
+/**
+ * Register or update user FCM device token
+ */
+const registerFcmToken = async (req, res) => {
+    try {
+        const userId = req.userId || req.user?._id;
+        const { token, deviceType } = req.body;
+        if (!userId) {
+            res.status(401).json({ success: false, message: 'Unauthorized user' });
+            return;
+        }
+        if (!token || typeof token !== 'string') {
+            res.status(400).json({ success: false, message: 'FCM token is required' });
+            return;
+        }
+        const fcmRecord = await fcmToken_model_1.default.findOneAndUpdate({ token: token.trim() }, {
+            userId,
+            token: token.trim(),
+            deviceType: deviceType || 'android',
+            updatedAt: new Date(),
+        }, { upsert: true, new: true });
+        res.status(200).json({
+            success: true,
+            message: 'FCM token registered successfully',
+            data: fcmRecord,
+        });
+    }
+    catch (error) {
+        console.error('Error registering FCM token:', error);
+        res.status(500).json({ success: false, message: 'Failed to register FCM token', error: error.message });
+    }
+};
+exports.registerFcmToken = registerFcmToken;
+/**
+ * Delete FCM device token (e.g. on logout)
+ */
+const removeFcmToken = async (req, res) => {
+    try {
+        const userId = req.userId || req.user?._id;
+        const { token } = req.body;
+        if (!userId) {
+            res.status(401).json({ success: false, message: 'Unauthorized user' });
+            return;
+        }
+        if (!token) {
+            await fcmToken_model_1.default.deleteMany({ userId });
+        }
+        else {
+            await fcmToken_model_1.default.deleteOne({ userId, token: token.trim() });
+        }
+        res.status(200).json({
+            success: true,
+            message: 'FCM token(s) removed successfully',
+        });
+    }
+    catch (error) {
+        console.error('Error removing FCM token:', error);
+        res.status(500).json({ success: false, message: 'Failed to remove FCM token', error: error.message });
+    }
+};
+exports.removeFcmToken = removeFcmToken;
+/**
+ * Update user notification preferences
+ */
+const updateNotificationPreferences = async (req, res) => {
+    try {
+        const userId = req.userId || req.user?._id;
+        const { preferences } = req.body;
+        if (!userId) {
+            res.status(401).json({ success: false, message: 'Unauthorized user' });
+            return;
+        }
+        if (!preferences || typeof preferences !== 'object') {
+            res.status(400).json({ success: false, message: 'Notification preferences object is required' });
+            return;
+        }
+        const user = await user_model_1.default.findById(userId);
+        if (!user) {
+            res.status(404).json({ success: false, message: 'User not found' });
+            return;
+        }
+        user.notificationPreferences = {
+            ...user.notificationPreferences,
+            ...preferences,
+        };
+        await user.save();
+        res.status(200).json({
+            success: true,
+            message: 'Notification preferences updated successfully',
+            data: user.notificationPreferences,
+        });
+    }
+    catch (error) {
+        console.error('Error updating notification preferences:', error);
+        res.status(500).json({ success: false, message: 'Failed to update preferences', error: error.message });
+    }
+};
+exports.updateNotificationPreferences = updateNotificationPreferences;
+/**
+ * Admin: Broadcast notification to ALL users (Title, Message, Image) with FCM Push Notifications
  */
 const broadcastNotification = async (req, res) => {
     try {
@@ -190,15 +394,20 @@ const broadcastNotification = async (req, res) => {
             res.status(400).json({ success: false, message: 'Notification message is required.' });
             return;
         }
-        // Find all users (excluding banned users)
-        const users = await user_model_1.default.find({ isBanned: { $ne: true } }).select('_id');
-        if (users.length === 0) {
-            res.status(400).json({ success: false, message: 'No registered users found to send broadcast.' });
+        // Find all active users who have broadcast and master notifications enabled
+        const eligibleUsers = await user_model_1.default.find({
+            isBanned: { $ne: true },
+            'notificationPreferences.master': { $ne: false },
+            'notificationPreferences.broadcast': { $ne: false },
+        }).select('_id');
+        const eligibleUserIds = eligibleUsers.map((u) => u._id);
+        if (eligibleUserIds.length === 0) {
+            res.status(400).json({ success: false, message: 'No eligible registered users found for broadcast.' });
             return;
         }
         const now = new Date();
-        const notificationsToInsert = users.map((u) => ({
-            userId: u._id,
+        const notificationsToInsert = eligibleUserIds.map((uId) => ({
+            userId: uId,
             title: title.trim(),
             message: message.trim(),
             imageUrl: imageUrl && typeof imageUrl === 'string' ? imageUrl.trim() : undefined,
@@ -208,11 +417,79 @@ const broadcastNotification = async (req, res) => {
             createdAt: now,
         }));
         await notification_model_1.Notification.insertMany(notificationsToInsert);
+        // Send FCM Push Notifications via Firebase Admin SDK
+        let pushSuccessCount = 0;
+        const messaging = (0, firebase_config_1.getFirebaseMessaging)();
+        if (messaging && eligibleUserIds.length > 0) {
+            const fcmTokens = await fcmToken_model_1.default.find({ userId: { $in: eligibleUserIds } }).select('token');
+            const tokens = fcmTokens.map((t) => t.token).filter(Boolean);
+            if (tokens.length > 0) {
+                const batchSize = 500;
+                for (let i = 0; i < tokens.length; i += batchSize) {
+                    const batchTokens = tokens.slice(i, i + batchSize);
+                    try {
+                        const response = await messaging.sendEachForMulticast({
+                            tokens: batchTokens,
+                            notification: {
+                                title: title.trim(),
+                                body: message.trim(),
+                                ...(imageUrl ? { imageUrl: imageUrl.trim() } : {}),
+                            },
+                            data: {
+                                type: type || 'broadcast',
+                                title: title.trim(),
+                                message: message.trim(),
+                                ...(imageUrl ? { imageUrl: imageUrl.trim() } : {}),
+                            },
+                            android: {
+                                priority: 'high',
+                                notification: {
+                                    channelId: 'broadcast_reminders',
+                                    priority: 'high',
+                                    sound: 'default',
+                                },
+                            },
+                            apns: {
+                                payload: {
+                                    aps: {
+                                        alert: {
+                                            title: title.trim(),
+                                            body: message.trim(),
+                                        },
+                                        sound: 'default',
+                                        badge: 1,
+                                    },
+                                },
+                            },
+                        });
+                        pushSuccessCount += response.successCount;
+                        // Remove invalid/stale tokens
+                        const staleTokens = [];
+                        response.responses.forEach((resp, idx) => {
+                            if (!resp.success && resp.error) {
+                                const errorCode = resp.error.code;
+                                if (errorCode === 'messaging/invalid-registration-token' ||
+                                    errorCode === 'messaging/registration-token-not-registered') {
+                                    staleTokens.push(batchTokens[idx]);
+                                }
+                            }
+                        });
+                        if (staleTokens.length > 0) {
+                            await fcmToken_model_1.default.deleteMany({ token: { $in: staleTokens } });
+                        }
+                    }
+                    catch (fcmError) {
+                        console.error('[FCM ERROR] Multicast send failed:', fcmError);
+                    }
+                }
+            }
+        }
         res.status(200).json({
             success: true,
-            message: `Broadcast notification successfully dispatched to ${users.length} users!`,
+            message: `Broadcast notification successfully dispatched to ${eligibleUserIds.length} users (${pushSuccessCount} push notifications sent)!`,
             data: {
-                recipientsCount: users.length,
+                recipientsCount: eligibleUserIds.length,
+                pushSuccessCount,
                 title,
                 message,
                 imageUrl,
