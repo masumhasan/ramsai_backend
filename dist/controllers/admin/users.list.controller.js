@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AdminUsersListController = void 0;
 const user_model_1 = __importDefault(require("../../models/user.model"));
-const SAFE_USER_FIELDS = 'name email role createdAt lastActiveAt subscriptionStatus hasCompletedOnboarding age gender isBanned currentPlan hasSelectedSubscription';
+const SAFE_USER_FIELDS = 'name email role createdAt lastActiveAt subscriptionStatus hasCompletedOnboarding age gender isBanned currentPlan hasSelectedSubscription subscriptionExpiresAt subscriptionProductId subscriptionWillRenew revenueCatAppUserId subscriptionUpdatedAt';
 class AdminUsersListController {
     static async getUsers(req, res) {
         try {
@@ -29,7 +29,7 @@ class AdminUsersListController {
                 ? sortBy
                 : 'createdAt';
             const sortDir = sortOrder === 'asc' ? 'asc' : 'desc';
-            const [users, total] = await Promise.all([
+            const [users, total, bannedTotal, adminsTotal, activeSubsTotal] = await Promise.all([
                 user_model_1.default.find(filter)
                     .select(SAFE_USER_FIELDS)
                     .sort({ [sortField]: sortDir === 'asc' ? 1 : -1 })
@@ -37,6 +37,14 @@ class AdminUsersListController {
                     .limit(limitNum)
                     .lean(),
                 user_model_1.default.countDocuments(filter),
+                user_model_1.default.countDocuments({ isBanned: true }),
+                user_model_1.default.countDocuments({ role: { $in: ['admin', 'superadmin'] } }),
+                user_model_1.default.countDocuments({
+                    $or: [
+                        { currentPlan: 'premium' },
+                        { subscriptionStatus: { $in: ['active', 'trial'] } }
+                    ]
+                }),
             ]);
             return res.json({
                 users,
@@ -45,6 +53,12 @@ class AdminUsersListController {
                     page: pageNum,
                     limit: limitNum,
                     totalPages: Math.ceil(total / limitNum),
+                },
+                stats: {
+                    totalUsers: total,
+                    bannedUsers: bannedTotal,
+                    admins: adminsTotal,
+                    activeSubscribers: activeSubsTotal,
                 },
             });
         }

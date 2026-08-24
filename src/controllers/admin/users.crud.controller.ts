@@ -2,7 +2,7 @@ import { Response } from 'express';
 import { AuthRequest } from '../../middleware/auth.middleware';
 import User from '../../models/user.model';
 
-const SAFE_USER_FIELDS = 'name email role createdAt lastActiveAt subscriptionStatus hasCompletedOnboarding age gender isBanned currentPlan hasSelectedSubscription';
+const SAFE_USER_FIELDS = 'name email role createdAt lastActiveAt subscriptionStatus hasCompletedOnboarding age gender isBanned currentPlan hasSelectedSubscription subscriptionExpiresAt subscriptionProductId subscriptionWillRenew revenueCatAppUserId subscriptionUpdatedAt';
 
 // Fields that admins may update (excludes password, role - role has its own endpoint)
 const ALLOWED_UPDATE_FIELDS = [
@@ -10,6 +10,8 @@ const ALLOWED_UPDATE_FIELDS = [
   'currentWeight', 'targetWeight', 'goal', 'activityLevel', 'timezone',
   'weekStart', 'dietaryPreference', 'language', 'hasCompletedOnboarding',
   'subscriptionStatus', 'isBanned', 'currentPlan', 'hasSelectedSubscription',
+  'subscriptionExpiresAt', 'subscriptionProductId', 'subscriptionWillRenew',
+  'revenueCatAppUserId', 'subscriptionUpdatedAt',
 ];
 
 export class AdminUsersCrudController {

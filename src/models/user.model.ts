@@ -33,6 +33,13 @@ export interface IUser extends Document {
   subscriptionPlanId?: mongoose.Types.ObjectId;
   hasSelectedSubscription?: boolean;
   subscriptionExpiresAt?: Date;
+  subscriptionProductId?: string;
+  subscriptionWillRenew?: boolean;
+  revenueCatAppUserId?: string;
+  subscriptionUpdatedAt?: Date;
+  dailyFoodScansCount?: number;
+  dailyProductScansCount?: number;
+  lastScanResetDate?: Date;
   nutritionalTargets?: {
     dailyCalories: number;
     dailyProtein: number;
@@ -115,6 +122,13 @@ const UserSchema: Schema = new Schema({
     default: false,
   },
   subscriptionExpiresAt: { type: Date },
+  subscriptionProductId: { type: String },
+  subscriptionWillRenew: { type: Boolean, default: false },
+  revenueCatAppUserId: { type: String },
+  subscriptionUpdatedAt: { type: Date },
+  dailyFoodScansCount: { type: Number, default: 0 },
+  dailyProductScansCount: { type: Number, default: 0 },
+  lastScanResetDate: { type: Date, default: Date.now },
   otpCode: { type: String },
   otpExpires: { type: Date },
   hasCompletedOnboarding: { type: Boolean, default: false },

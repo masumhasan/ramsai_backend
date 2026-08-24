@@ -444,7 +444,7 @@ const broadcastNotification = async (req, res) => {
                             android: {
                                 priority: 'high',
                                 notification: {
-                                    channelId: 'broadcast_reminders',
+                                    channelId: 'broadcast_reminders_v2',
                                     priority: 'high',
                                     sound: 'default',
                                 },

@@ -5,13 +5,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AdminUsersCrudController = void 0;
 const user_model_1 = __importDefault(require("../../models/user.model"));
-const SAFE_USER_FIELDS = 'name email role createdAt lastActiveAt subscriptionStatus hasCompletedOnboarding age gender isBanned currentPlan hasSelectedSubscription';
+const SAFE_USER_FIELDS = 'name email role createdAt lastActiveAt subscriptionStatus hasCompletedOnboarding age gender isBanned currentPlan hasSelectedSubscription subscriptionExpiresAt subscriptionProductId subscriptionWillRenew revenueCatAppUserId subscriptionUpdatedAt';
 // Fields that admins may update (excludes password, role - role has its own endpoint)
 const ALLOWED_UPDATE_FIELDS = [
     'name', 'age', 'gender', 'valueType', 'height', 'entryWeight',
     'currentWeight', 'targetWeight', 'goal', 'activityLevel', 'timezone',
     'weekStart', 'dietaryPreference', 'language', 'hasCompletedOnboarding',
     'subscriptionStatus', 'isBanned', 'currentPlan', 'hasSelectedSubscription',
+    'subscriptionExpiresAt', 'subscriptionProductId', 'subscriptionWillRenew',
+    'revenueCatAppUserId', 'subscriptionUpdatedAt',
 ];
 class AdminUsersCrudController {
     static async getUser(req, res) {

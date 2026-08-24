@@ -5,7 +5,7 @@ import User from '../../models/user.model';
 type SortField = 'createdAt' | 'lastActiveAt' | 'role' | 'name';
 type SortOrder = 'asc' | 'desc';
 
-const SAFE_USER_FIELDS = 'name email role createdAt lastActiveAt subscriptionStatus hasCompletedOnboarding age gender isBanned currentPlan hasSelectedSubscription';
+const SAFE_USER_FIELDS = 'name email role createdAt lastActiveAt subscriptionStatus hasCompletedOnboarding age gender isBanned currentPlan hasSelectedSubscription subscriptionExpiresAt subscriptionProductId subscriptionWillRenew revenueCatAppUserId subscriptionUpdatedAt';
 
 export class AdminUsersListController {
   public static async getUsers(req: AuthRequest, res: Response) {
@@ -43,7 +43,7 @@ export class AdminUsersListController {
         : 'createdAt';
       const sortDir: SortOrder = sortOrder === 'asc' ? 'asc' : 'desc';
 
-      const [users, total] = await Promise.all([
+      const [users, total, bannedTotal, adminsTotal, activeSubsTotal] = await Promise.all([
         User.find(filter)
           .select(SAFE_USER_FIELDS)
           .sort({ [sortField]: sortDir === 'asc' ? 1 : -1 })
@@ -51,6 +51,14 @@ export class AdminUsersListController {
           .limit(limitNum)
           .lean(),
         User.countDocuments(filter),
+        User.countDocuments({ isBanned: true }),
+        User.countDocuments({ role: { $in: ['admin', 'superadmin'] } }),
+        User.countDocuments({
+          $or: [
+            { currentPlan: 'premium' },
+            { subscriptionStatus: { $in: ['active', 'trial'] } }
+          ]
+        }),
       ]);
 
       return res.json({
@@ -60,6 +68,12 @@ export class AdminUsersListController {
           page: pageNum,
           limit: limitNum,
           totalPages: Math.ceil(total / limitNum),
+        },
+        stats: {
+          totalUsers: total,
+          bannedUsers: bannedTotal,
+          admins: adminsTotal,
+          activeSubscribers: activeSubsTotal,
         },
       });
     } catch (error: any) {

@@ -11,4 +11,7 @@ router.get('/plans', SubscriptionController.getPlans);
 router.post('/select', authenticate, SubscriptionController.selectPlan);
 router.get('/my-subscription', authenticate, SubscriptionController.getMySubscription);
 
+// RevenueCat Webhook (Public route, authentication verified inside handler)
+router.post('/webhook', SubscriptionController.handleRevenueCatWebhook);
+
 export default router;

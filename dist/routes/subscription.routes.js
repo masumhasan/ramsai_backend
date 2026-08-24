@@ -9,4 +9,6 @@ router.get('/plans', subscription_controller_1.SubscriptionController.getPlans);
 // Authenticated user subscription endpoints
 router.post('/select', auth_middleware_1.authenticate, subscription_controller_1.SubscriptionController.selectPlan);
 router.get('/my-subscription', auth_middleware_1.authenticate, subscription_controller_1.SubscriptionController.getMySubscription);
+// RevenueCat Webhook (Public route, authentication verified inside handler)
+router.post('/webhook', subscription_controller_1.SubscriptionController.handleRevenueCatWebhook);
 exports.default = router;

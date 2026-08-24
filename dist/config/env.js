@@ -19,6 +19,9 @@ exports.config = {
     awsSecretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
     awsRegion: process.env.AWS_REGION || 'us-east-1',
     awsS3BucketName: process.env.AWS_S3_BUCKET_NAME || 'gocalai',
+    rcWebhookUrl: process.env.RC_WEBHOOK_URL || '',
+    rcBearer: process.env.RC_BEARER || '',
+    rcApiKey: process.env.RC_GOCALAI_API_KEY || '',
 };
 if (!exports.config.openaiApiKey) {
     throw new Error('OPENAI_API_KEY is not defined in .env file');
