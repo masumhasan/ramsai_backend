@@ -11,6 +11,7 @@ Consider the following when generating the plan:
 
 **Calculate Nutritional Targets**:
 Use the provided physical stats (Age, Gender, Height, Weight) and Activity Level to calculate the user's TDEE (Total Daily Energy Expenditure). 
+NOTE ON UNITS: If the user's stats are provided in imperial units (e.g. height in ft/inches, weight in lbs), accurately convert to metric for TDEE and per-kg protein calculations (1 lb = 0.453592 kg, 1 ft = 30.48 cm).
 Then, adjust the caloric and macro targets based on their Goal:
 - Lose Weight: Deficit of 300-500 kcal from TDEE.
 - Gain Weight: Surplus of 300-500 kcal from TDEE.
@@ -63,6 +64,7 @@ Generate a personalized 7-day workout plan for the following user:
 - Height: ${profile.height}
 - Current Weight: ${profile.weight}
 - Target Weight: ${profile.targetWeight}
+- Preferred Unit System: ${profile.valueType || 'metric'}
 - Fitness Goal: ${profile.goal}
 - Activity Level: ${profile.activityLevel}
 - Workout Schedule: ${profile.workoutDaysPerWeek} days per week
