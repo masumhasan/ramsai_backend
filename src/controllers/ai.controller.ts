@@ -4,6 +4,7 @@ import { WorkoutService } from '../services/workout.service';
 import { BurnService } from '../services/burn.service';
 import { ProductService } from '../services/product.service';
 import { checkAndIncrementScanLimit } from '../utils/limit_checker';
+import { checkWorkoutPlanAccess } from '../utils/subscription.utils';
 import User from '../models/user.model';
 
 export class AIController {
@@ -58,12 +59,29 @@ export class AIController {
     }
 
     try {
-      // Verify premium status
-      const user = await User.findById(userId).select('currentPlan subscriptionStatus').lean();
-      const isPremium = user && (user.currentPlan === 'premium' || user.subscriptionStatus === 'active' || user.subscriptionStatus === 'trial');
-      if (!isPremium) {
-        console.warn(`[API Info] Workout plan request blocked. Premium subscription required for user: ${userId}`);
-        return res.status(402).json({ error: 'PREMIUM_REQUIRED', limitReached: true });
+      // Verify subscription / 14-day trial status
+      const user = await User.findById(userId)
+        .select('currentPlan subscriptionStatus createdAt workoutTrialExpiresAt')
+        .lean();
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      const access = checkWorkoutPlanAccess(user);
+      if (!access.allowed) {
+        console.warn(`[API Info] Workout plan request blocked. 14-day trial expired and premium subscription required for user: ${userId}`);
+        return res.status(402).json({
+          error: 'PREMIUM_REQUIRED',
+          message: 'Your 14-day free workout trial has ended. A Premium subscription is required to generate or regenerate workouts.',
+          limitReached: true,
+          isTrialExpired: true,
+        });
+      }
+
+      if (access.isTrial) {
+        console.log(`[API Info] Workout plan allowed under 14-day trial (${access.daysRemaining} days remaining) for user: ${userId}`);
+      } else {
+        console.log(`[API Info] Workout plan allowed under Premium subscription for user: ${userId}`);
       }
 
       console.log(`- UserID: ${userId}`);

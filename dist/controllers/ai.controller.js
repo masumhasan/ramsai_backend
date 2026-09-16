@@ -9,6 +9,7 @@ const workout_service_1 = require("../services/workout.service");
 const burn_service_1 = require("../services/burn.service");
 const product_service_1 = require("../services/product.service");
 const limit_checker_1 = require("../utils/limit_checker");
+const subscription_utils_1 = require("../utils/subscription.utils");
 const user_model_1 = __importDefault(require("../models/user.model"));
 class AIController {
     static async analyzeFood(req, res) {
@@ -50,12 +51,28 @@ class AIController {
             return res.status(401).json({ error: 'Authentication required' });
         }
         try {
-            // Verify premium status
-            const user = await user_model_1.default.findById(userId).select('currentPlan subscriptionStatus').lean();
-            const isPremium = user && (user.currentPlan === 'premium' || user.subscriptionStatus === 'active' || user.subscriptionStatus === 'trial');
-            if (!isPremium) {
-                console.warn(`[API Info] Workout plan request blocked. Premium subscription required for user: ${userId}`);
-                return res.status(402).json({ error: 'PREMIUM_REQUIRED', limitReached: true });
+            // Verify subscription / 14-day trial status
+            const user = await user_model_1.default.findById(userId)
+                .select('currentPlan subscriptionStatus createdAt workoutTrialExpiresAt')
+                .lean();
+            if (!user) {
+                return res.status(404).json({ error: 'User not found' });
+            }
+            const access = (0, subscription_utils_1.checkWorkoutPlanAccess)(user);
+            if (!access.allowed) {
+                console.warn(`[API Info] Workout plan request blocked. 14-day trial expired and premium subscription required for user: ${userId}`);
+                return res.status(402).json({
+                    error: 'PREMIUM_REQUIRED',
+                    message: 'Your 14-day free workout trial has ended. A Premium subscription is required to generate or regenerate workouts.',
+                    limitReached: true,
+                    isTrialExpired: true,
+                });
+            }
+            if (access.isTrial) {
+                console.log(`[API Info] Workout plan allowed under 14-day trial (${access.daysRemaining} days remaining) for user: ${userId}`);
+            }
+            else {
+                console.log(`[API Info] Workout plan allowed under Premium subscription for user: ${userId}`);
             }
             console.log(`- UserID: ${userId}`);
             console.log(`- Age: ${profile.age}`);

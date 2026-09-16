@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.SubscriptionController = void 0;
 const subscription_plan_model_1 = __importDefault(require("../models/subscription_plan.model"));
 const user_model_1 = __importDefault(require("../models/user.model"));
+const subscription_utils_1 = require("../utils/subscription.utils");
 const axios_1 = __importDefault(require("axios"));
 const env_1 = require("../config/env");
 class SubscriptionController {
@@ -54,10 +55,13 @@ class SubscriptionController {
     }
     static async getMySubscription(req, res) {
         try {
-            const user = await user_model_1.default.findById(req.userId).select('currentPlan subscriptionPlanId subscriptionStatus hasSelectedSubscription subscriptionExpiresAt').lean();
+            const user = await user_model_1.default.findById(req.userId)
+                .select('currentPlan subscriptionPlanId subscriptionStatus hasSelectedSubscription subscriptionExpiresAt createdAt workoutTrialExpiresAt')
+                .lean();
             if (!user) {
                 return res.status(404).json({ error: 'User not found' });
             }
+            const workoutAccess = (0, subscription_utils_1.checkWorkoutPlanAccess)(user);
             let plan = null;
             if (user.currentPlan) {
                 plan = await subscription_plan_model_1.default.findOne({ type: user.currentPlan }).lean();
@@ -68,6 +72,11 @@ class SubscriptionController {
                     status: user.subscriptionStatus || 'active',
                     hasSelectedSubscription: user.hasSelectedSubscription ?? false,
                     expiresAt: user.subscriptionExpiresAt || null,
+                    workoutTrial: {
+                        isTrialActive: workoutAccess.isTrial,
+                        daysRemaining: workoutAccess.daysRemaining,
+                        expiresAt: workoutAccess.trialExpiresAt,
+                    },
                     plan,
                 },
             });

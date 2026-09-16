@@ -37,6 +37,7 @@ export interface IUser extends Document {
   subscriptionWillRenew?: boolean;
   revenueCatAppUserId?: string;
   subscriptionUpdatedAt?: Date;
+  workoutTrialExpiresAt?: Date;
   dailyFoodScansCount?: number;
   dailyProductScansCount?: number;
   lastScanResetDate?: Date;
@@ -126,6 +127,10 @@ const UserSchema: Schema = new Schema({
   subscriptionWillRenew: { type: Boolean, default: false },
   revenueCatAppUserId: { type: String },
   subscriptionUpdatedAt: { type: Date },
+  workoutTrialExpiresAt: {
+    type: Date,
+    default: () => new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
+  },
   dailyFoodScansCount: { type: Number, default: 0 },
   dailyProductScansCount: { type: Number, default: 0 },
   lastScanResetDate: { type: Date, default: Date.now },

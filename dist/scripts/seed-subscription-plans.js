@@ -14,6 +14,7 @@ const DEFAULT_PLANS = [
         features: [
             '3 AI Food Scans per day',
             '2 Product scan per day (barcode+ocr)',
+            '14-day free AI Workout Plan generation & regeneration',
             'Standard workout routines',
             'Basic calorie tracking',
         ],
@@ -31,7 +32,7 @@ const DEFAULT_PLANS = [
         features: [
             'Unlimited AI Food Scans',
             'Unlimited Product scan per day (barcode+ocr)',
-            'Personalized AI Workout Plans',
+            'Unlimited AI Workout Plans (generate & regenerate anytime)',
             'Detailed Macro & Nutrient Reports',
         ],
         dailyLimits: {
@@ -50,7 +51,8 @@ const seedSubscriptionPlans = async () => {
                 console.log(`[SEED] Created default subscription plan: ${planData.name}`);
             }
             else {
-                console.log(`[SEED] Subscription plan '${planData.name}' already exists.`);
+                await subscription_plan_model_1.default.updateOne({ type: planData.type }, { $set: { features: planData.features } });
+                console.log(`[SEED] Updated subscription plan features for '${planData.name}'.`);
             }
         }
     }

@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { AuthRequest } from '../middleware/auth.middleware';
 import SubscriptionPlan from '../models/subscription_plan.model';
 import User from '../models/user.model';
+import { checkWorkoutPlanAccess } from '../utils/subscription.utils';
 import axios from 'axios';
 import { config } from '../config/env';
 
@@ -59,10 +60,14 @@ export class SubscriptionController {
 
   public static async getMySubscription(req: AuthRequest, res: Response) {
     try {
-      const user = await User.findById(req.userId).select('currentPlan subscriptionPlanId subscriptionStatus hasSelectedSubscription subscriptionExpiresAt').lean();
+      const user = await User.findById(req.userId)
+        .select('currentPlan subscriptionPlanId subscriptionStatus hasSelectedSubscription subscriptionExpiresAt createdAt workoutTrialExpiresAt')
+        .lean();
       if (!user) {
         return res.status(404).json({ error: 'User not found' });
       }
+
+      const workoutAccess = checkWorkoutPlanAccess(user);
 
       let plan = null;
       if (user.currentPlan) {
@@ -75,6 +80,11 @@ export class SubscriptionController {
           status: user.subscriptionStatus || 'active',
           hasSelectedSubscription: user.hasSelectedSubscription ?? false,
           expiresAt: user.subscriptionExpiresAt || null,
+          workoutTrial: {
+            isTrialActive: workoutAccess.isTrial,
+            daysRemaining: workoutAccess.daysRemaining,
+            expiresAt: workoutAccess.trialExpiresAt,
+          },
           plan,
         },
       });
